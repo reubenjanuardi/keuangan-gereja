@@ -1,20 +1,5 @@
 # ==========================================
-# STAGE 1: Build Frontend Assets (Vite + Vue 3)
-# ==========================================
-FROM node:22-alpine AS frontend-builder
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY resources/ ./resources/
-COPY vite.config.js tailwind.config.js postcss.config.js jsconfig.json ./
-COPY public/ ./public/
-
-RUN npm run build
-
-# ==========================================
-# STAGE 2: Install Composer Dependencies
+# STAGE 1: Install Composer Dependencies
 # ==========================================
 FROM composer:2 AS vendor-builder
 WORKDIR /app
@@ -27,6 +12,21 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts \
     --ignore-platform-reqs
+
+# ==========================================
+# STAGE 2: Build Frontend Assets (Vite + Vue 3)
+# ==========================================
+FROM node:22-alpine AS frontend-builder
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+# Copy vendor dari composer stage agar import Ziggy & helper Laravel dapat di-resolve saat build
+COPY --from=vendor-builder /app/vendor ./vendor
+COPY . .
+
+RUN npm run build
 
 # ==========================================
 # STAGE 3: Production Runtime (PHP 8.4 + Nginx)
@@ -67,6 +67,15 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && sed -i 's/memory_limit = 128M/memory_limit = 256M/g' "$PHP_INI_DIR/php.ini"
 
 WORKDIR /var/www/html
+
+# Buat direktori wajib Laravel & Nginx runtime
+RUN mkdir -p \
+    /var/www/html/storage/framework/cache/data \
+    /var/www/html/storage/framework/sessions \
+    /var/www/html/storage/framework/views \
+    /var/www/html/storage/logs \
+    /var/www/html/bootstrap/cache \
+    /run/nginx
 
 # Copy application source code
 COPY . .
