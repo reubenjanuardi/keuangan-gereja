@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('chart_of_accounts', function (Blueprint $table) {
-            $table->string('kode_akun')->primary();
+            $table->string('kode_akun')->primary()->unique();
             $table->string('nama_akun');
             $table->enum('kategori', ['Penerimaan', 'Pengeluaran', 'Kas & Bank', 'Hutang / Piutang']);
 
