@@ -5,71 +5,71 @@
     <title>Voucher - {{ $voucher->no_bukti }}</title>
     <style>
         @page {
-            size: A4 portrait;
-            margin: 1.8cm 1.8cm 1.5cm 1.8cm;
+            size: a5 portrait;
+            margin: 0.8cm 0.8cm 0.8cm 0.8cm;
         }
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 10pt;
+            font-size: 8.5pt;
             color: #000;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         /* ── TOP HEADER ─────────────────────────────────────── */
         .top-header {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
         .top-header td {
             vertical-align: top;
             padding: 0;
         }
         .church-info {
-            font-size: 10pt;
-            line-height: 1.6;
+            font-size: 8pt;
+            line-height: 1.4;
         }
         .church-info .church-name {
-            font-size: 11pt;
+            font-size: 9.5pt;
             font-weight: bold;
         }
         .no-box {
-            width: 220px;
+            width: 170px;
             text-align: right;
         }
         .no-box .no-label {
-            font-size: 10pt;
-            margin-bottom: 3px;
+            font-size: 8.5pt;
+            margin-bottom: 2px;
         }
         .account-box {
-            width: 220px;
+            width: 170px;
             border-collapse: collapse;
             border: 1px solid #000;
         }
         .account-box th {
             border: 1px solid #000;
-            padding: 4px 8px;
-            font-size: 9pt;
+            padding: 3px 4px;
+            font-size: 8pt;
             font-weight: bold;
             text-align: center;
         }
         .account-box td {
             border: 1px solid #000;
-            padding: 6px 8px;
-            font-size: 9pt;
+            padding: 3px 4px;
+            font-size: 8pt;
             text-align: center;
-            height: 28px;
+            height: 20px;
             vertical-align: middle;
         }
 
         /* ── DOCUMENT TITLE ─────────────────────────────────── */
         .doc-title {
             text-align: center;
-            font-size: 12pt;
+            font-size: 10.5pt;
             font-weight: bold;
             text-decoration: underline;
             text-transform: uppercase;
-            margin: 12px 0 14px 0;
+            margin: 8px 0 10px 0;
             letter-spacing: 0.5px;
         }
 
@@ -77,54 +77,55 @@
         .meta-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
+            font-size: 8.5pt;
         }
         .meta-table td {
             padding: 2px 4px;
             vertical-align: top;
         }
         .meta-label {
-            width: 100px;
+            width: 85px;
             font-weight: bold;
             white-space: nowrap;
         }
         .meta-colon {
-            width: 12px;
+            width: 10px;
         }
 
         /* ── ITEMS TABLE ────────────────────────────────────── */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
         .items-table th {
             border: 1px solid #000;
-            padding: 6px 8px;
-            font-size: 10pt;
+            padding: 4px 6px;
+            font-size: 8.5pt;
             font-weight: bold;
             text-align: center;
             background-color: #fff;
         }
         .items-table td {
             border: 1px solid #000;
-            padding: 5px 8px;
-            font-size: 10pt;
+            padding: 3px 6px;
+            font-size: 8.5pt;
             vertical-align: top;
         }
         .items-table .no-col  { width: 8%;  text-align: center; }
-        .items-table .desc-col { width: 67%; }
-        .items-table .amt-col  { width: 25%; text-align: right; }
+        .items-table .desc-col { width: 62%; }
+        .items-table .amt-col  { width: 30%; text-align: right; }
         .items-table .item-row td {
-            height: 22px;
+            height: 20px;
         }
         /* Blank filler rows to give the table a fixed visual height */
         .items-table .blank-row td {
-            height: 22px;
+            height: 20px;
         }
         .total-row td {
             font-weight: bold;
-            font-size: 10pt;
+            font-size: 8.5pt;
             background-color: #fff;
         }
         .total-label {
@@ -150,23 +151,23 @@
         /* Left: 3-box signature block */
         .sig-left-table {
             border-collapse: collapse;
-            width: 260px;
+            width: 220px;
         }
         .sig-left-table th {
             border: 1px solid #000;
-            padding: 5px 10px;
-            font-size: 9.5pt;
+            padding: 3px 4px;
+            font-size: 8pt;
             font-weight: bold;
             text-align: center;
-            width: 86px;
+            width: 73px;
         }
         .sig-left-table td {
             border: 1px solid #000;
-            height: 60px;
-            width: 86px;
+            height: 50px;
+            width: 73px;
             vertical-align: bottom;
-            padding: 4px 8px;
-            font-size: 8pt;
+            padding: 3px 4px;
+            font-size: 7.5pt;
         }
 
         /* Right: city + penerima */
@@ -174,10 +175,10 @@
             text-align: right;
             vertical-align: top;
             padding-top: 0;
-            font-size: 10pt;
+            font-size: 8pt;
         }
         .sig-right .city-line {
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
         .sig-right .penerima-label {
             font-weight: bold;
@@ -262,8 +263,8 @@
                 </tr>
             @endforeach
 
-            {{-- Filler blank rows to give a fixed table height (min 8 rows total) --}}
-            @php $fillerCount = max(0, 7 - count($voucher->transactions)); @endphp
+            {{-- Filler blank rows to give a fixed table height (min 5 rows total) --}}
+            @php $fillerCount = max(0, 5 - count($voucher->transactions)); @endphp
             @for($i = 0; $i < $fillerCount; $i++)
                 <tr class="blank-row">
                     <td class="no-col">&nbsp;</td>

@@ -36,8 +36,20 @@ class LaporanPdfController extends Controller
             ->get()
             ->groupBy('kode_akun');
 
-        $pdf = Pdf::loadView('pdf.laporan-buku-besar', compact('reportData', 'startDate', 'endDate', 'kodeAkun', 'jenisVoucher'))
-            ->setPaper('a4', 'landscape');
+        $churchName = \App\Models\AppSetting::get('church_name', 'GPIB JEMAAT HOSIANA');
+        $churchAddress1 = \App\Models\AppSetting::get('church_address1', '');
+        $churchAddress2 = \App\Models\AppSetting::get('church_address2', '');
+
+        $pdf = Pdf::loadView('pdf.laporan-buku-besar', compact(
+            'reportData',
+            'startDate',
+            'endDate',
+            'kodeAkun',
+            'jenisVoucher',
+            'churchName',
+            'churchAddress1',
+            'churchAddress2'
+        ))->setPaper('a4', 'landscape');
 
         return $pdf->stream('Laporan-Buku-Besar.pdf');
     }
@@ -50,6 +62,10 @@ class LaporanPdfController extends Controller
         $startDate = $request->query('startDate') ?: now()->startOfMonth()->toDateString();
         $endDate = $request->query('endDate') ?: now()->endOfMonth()->toDateString();
         $kategori = $request->query('kategori');
+
+        $churchName = \App\Models\AppSetting::get('church_name', 'GPIB JEMAAT HOSIANA');
+        $churchAddress1 = \App\Models\AppSetting::get('church_address1', '');
+        $churchAddress2 = \App\Models\AppSetting::get('church_address2', '');
 
         $query = Transaction::query()
             ->with(['chartOfAccount.parent', 'voucher'])
@@ -73,9 +89,44 @@ class LaporanPdfController extends Controller
                 ->whereColumn('vouchers.no_bukti', 'transactions.no_bukti')
         )->get();
 
-        $pdf = Pdf::loadView('pdf.laporan-jurnal', compact('reportData', 'startDate', 'endDate', 'kategori'))
-            ->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView('pdf.laporan-jurnal', compact(
+            'reportData',
+            'startDate',
+            'endDate',
+            'kategori',
+            'churchName',
+            'churchAddress1',
+            'churchAddress2'
+        ))->setPaper('a4', 'landscape');
 
         return $pdf->stream('Laporan-Jurnal.pdf');
+    }
+
+    /**
+     * Stream PDF for Laporan Realisasi Mingguan
+     */
+    public function realisasiMingguan(Request $request): Response
+    {
+        $startDate = $request->query('startDate') ?: now()->startOfWeek()->toDateString();
+        $endDate = $request->query('endDate') ?: now()->endOfWeek()->toDateString();
+        $mingguKe = $request->query('mingguKe') ?: '';
+
+        $churchName = \App\Models\AppSetting::get('church_name', 'GPIB JEMAAT HOSIANA');
+        $churchAddress1 = \App\Models\AppSetting::get('church_address1', '');
+        $churchAddress2 = \App\Models\AppSetting::get('church_address2', '');
+
+        $reportData = app(\App\Services\LaporanRealisasiService::class)->getWeeklyReport($startDate, $endDate);
+
+        $pdf = Pdf::loadView('pdf.laporan-realisasi-mingguan', compact(
+            'reportData',
+            'startDate',
+            'endDate',
+            'mingguKe',
+            'churchName',
+            'churchAddress1',
+            'churchAddress2'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->stream('Laporan-Realisasi-Mingguan.pdf');
     }
 }

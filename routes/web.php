@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\VoucherController;
-use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\VoucherPdfController;
 use App\Http\Controllers\LaporanPdfController;
 use Illuminate\Foundation\Application;
@@ -36,14 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/vouchers/{voucher}/pdf', [VoucherPdfController::class, 'stream'])->name('vouchers.pdf');
     Route::get('/laporan/buku-besar/pdf', [LaporanPdfController::class, 'bukuBesar'])->name('laporan.buku-besar.pdf');
     Route::get('/laporan/jurnal/pdf', [LaporanPdfController::class, 'jurnal'])->name('laporan.jurnal.pdf');
+    Route::get('/laporan/realisasi-mingguan/pdf', [LaporanPdfController::class, 'realisasiMingguan'])->name('laporan.realisasi-mingguan.pdf');
 });
 
-Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
-Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
-// Tambahkan di atas rute create yang sebelumnya
-Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
-Route::resource('coa', ChartOfAccountController::class)->parameters([
-    'coa' => 'coa' // menyesuaikan penamaan parameter agar binding model berjalan mulus
-]);
 
 require __DIR__ . '/auth.php';

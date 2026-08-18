@@ -485,3 +485,28 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 55.00.09,Perawatan kendaraan Gereja,PENGELUARAN,TRUE
 55.00.10,Bioskop Hosiana,PENGELUARAN,TRUE
 55.00.11,"Aksi ""telur Hosiana""",PENGELUARAN,TRUE
+1,KAS & BANK,KAS & BANK,FALSE
+11,Kas & Bank,KAS & BANK,FALSE
+111,Kas,KAS & BANK,FALSE
+111.01,Kas Besar,KAS & BANK,TRUE
+111.02,Kas Kecil,KAS & BANK,TRUE
+112,Bank (Anggaran Rutin),KAS & BANK,FALSE
+112.01,Bank xxx - Rekening Giro,KAS & BANK,TRUE
+112.02,Bank BRI - Rekening Tabungan Operasional,KAS & BANK,TRUE
+112.03,Bank BRI - Rekening Tabungan PEG (Pengembangan Ekonomi Gereja),KAS & BANK,TRUE
+112.04,Bank DKI - Rekening Tabungan BOTI (Bantuan Operasional Tempat Ibadah),KAS & BANK,TRUE
+113,Bank (Anggaran Non Rutin),KAS & BANK,FALSE
+113.01,Bank xxx - Rekening Giro,KAS & BANK,TRUE
+113.02,Bank xxx - Rekening Tabungan,KAS & BANK,TRUE
+114,Bank (Anggaran Proyek),KAS & BANK,FALSE
+114.01,Bank xxx - Rekening Giro,KAS & BANK,TRUE
+114.02,Bank xxx - Rekening Tabungan,KAS & BANK,TRUE
+115,Investasi,KAS & BANK,FALSE
+115.01,Deposito Bank BRI,KAS & BANK,TRUE
+115.02,Deposito Bank 02,KAS & BANK,TRUE
+115.03,Obligasi,KAS & BANK,TRUE
+12,Panjar/Uang Muka,KAS & BANK,TRUE
+13,Uang yang Harus diteruskan,KAS & BANK,TRUE
+51.01,Piutang Karyawan,HUTANG / PIUTANG,TRUE
+52.01,Hutang Karyawan,HUTANG / PIUTANG,TRUE
+

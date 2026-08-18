@@ -24,7 +24,8 @@ class VoucherPdfController extends Controller
 
         $terbilang = self::terbilang((int) round($voucher->total_nominal)) . ' Rupiah';
 
-        $pdf = Pdf::loadView('pdf.voucher', compact('voucher', 'settings', 'terbilang'));
+        $pdf = Pdf::loadView('pdf.voucher', compact('voucher', 'settings', 'terbilang'))
+            ->setPaper('a5', 'portrait');
 
         $filename = 'Voucher-' . preg_replace('/[^A-Za-z0-9\-]/', '_', $voucher->no_bukti) . '.pdf';
 
@@ -46,7 +47,8 @@ class VoucherPdfController extends Controller
 
         $terbilang = self::terbilang((int) round($voucher->total_nominal)) . ' Rupiah';
 
-        $pdf = Pdf::loadView('pdf.voucher', compact('voucher', 'settings', 'terbilang'));
+        $pdf = Pdf::loadView('pdf.voucher', compact('voucher', 'settings', 'terbilang'))
+            ->setPaper('a5', 'portrait');
 
         $filename = 'Voucher-' . preg_replace('/[^A-Za-z0-9\-]/', '_', $voucher->no_bukti) . '.pdf';
 

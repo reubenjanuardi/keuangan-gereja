@@ -20,18 +20,28 @@ class ChartOfAccountSeeder extends Seeder
         $csvFile = fopen($csvPath, 'r');
         $firstline = true;
 
-        // Membaca file CSV baris per baris
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
             if (!$firstline) {
+                if (empty($data) || count($data) < 4 || empty(trim($data[0]))) {
+                    continue;
+                }
+
                 // Mapping kolom CSV (0: Nomor Akun, 1: Uraian, 2: Kategori, 3: is_postable)
                 $kodeAkun = trim($data[0]);
                 $namaAkun = trim($data[1]);
-                $kategori = ucfirst(strtolower(trim($data[2]))); // Mengubah 'PENERIMAAN' jadi 'Penerimaan'
+                $rawKat = strtoupper(trim($data[2]));
+                $kategori = match ($rawKat) {
+                    'PENERIMAAN' => 'Penerimaan',
+                    'PENGELUARAN' => 'Pengeluaran',
+                    'KAS & BANK' => 'Kas & Bank',
+                    'HUTANG / PIUTANG' => 'Hutang / Piutang',
+                    default => ucfirst(strtolower(trim($data[2]))),
+                };
                 $isPostable = strtolower(trim($data[3])) === 'true' ? true : false;
 
                 $parentCode = null;
 
-                // Menentukan Parent Code berdasarkan titik (.)
+                // Menentukan Parent Code berdasarkan titik (.) atau prefix kode
                 if (strpos($kodeAkun, '.') !== false) {
                     $parts = explode('.', $kodeAkun);
                     array_pop($parts); // Hapus segmen terakhir
@@ -39,6 +49,10 @@ class ChartOfAccountSeeder extends Seeder
 
                     // Pastikan hierarki induknya tercipta lebih dulu agar tidak error Foreign Key
                     $this->createMissingParents($parentCode, $kategori);
+                } elseif (strlen($kodeAkun) === 3 && str_starts_with($kodeAkun, '11')) {
+                    $parentCode = '11';
+                } elseif (strlen($kodeAkun) === 2 && str_starts_with($kodeAkun, '1')) {
+                    $parentCode = '1';
                 }
 
                 ChartOfAccount::updateOrCreate(
@@ -72,6 +86,12 @@ class ChartOfAccountSeeder extends Seeder
             $grandParentCode = implode('.', $parts);
 
             // Panggil dirinya sendiri untuk memastikan kakek-buyut akunnya juga ada
+            $this->createMissingParents($grandParentCode, $kategori);
+        } elseif (strlen($parentCode) === 3 && str_starts_with($parentCode, '11')) {
+            $grandParentCode = '11';
+            $this->createMissingParents($grandParentCode, $kategori);
+        } elseif (strlen($parentCode) === 2 && str_starts_with($parentCode, '1')) {
+            $grandParentCode = '1';
             $this->createMissingParents($grandParentCode, $kategori);
         }
 

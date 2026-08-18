@@ -6,84 +6,123 @@
     <style>
         @page {
             size: A4 landscape;
-            margin: 1.2cm;
+            margin: 1.2cm 1.5cm 1.2cm 1.5cm;
         }
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 9pt;
-            color: #1a1a1a;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 8.5pt;
+            color: #111;
             line-height: 1.3;
         }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #2d3748;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-        .header h2 {
-            margin: 0;
-            font-size: 14pt;
-            text-transform: uppercase;
-            color: #1a202c;
-        }
-        .header p {
-            margin: 2px 0 0 0;
-            font-size: 8pt;
-            color: #718096;
-        }
-        .period-info {
-            font-size: 9pt;
+
+        /* ── HEADER KOP SURAT ──────────────────────────────── */
+        .kop-header {
+            width: 100%;
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
             margin-bottom: 12px;
-            color: #4a5568;
         }
-        table {
+        .church-title {
+            font-size: 11pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .church-sub {
+            font-size: 8pt;
+            color: #444;
+            margin-top: 2px;
+        }
+        .doc-title {
+            text-align: center;
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 6px 0 4px 0;
+            letter-spacing: 0.5px;
+        }
+        .period-subtitle {
+            text-align: center;
+            font-size: 8.5pt;
+            color: #444;
+            margin-bottom: 14px;
+        }
+
+        /* ── DATA TABLE ────────────────────────────────────── */
+        table.data-table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
-            border: 1px solid #cbd5e0;
+        table.data-table th {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
             padding: 5px 7px;
-            font-size: 8.5pt;
-        }
-        th {
-            background-color: #f7fafc;
+            font-size: 8pt;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 7.5pt;
+            text-align: left;
+        }
+        table.data-table td {
+            border: 1px solid #cbd5e1;
+            padding: 4px 7px;
+            font-size: 8pt;
         }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
+        .font-mono { font-family: monospace; }
         .total-row td {
             font-weight: bold;
-            background-color: #edf2f7;
-            font-size: 9.5pt;
+            background-color: #f8fafc;
+            border-top: 2px solid #cbd5e1;
+        }
+        .badge-masuk {
+            color: #047857;
+            font-weight: bold;
+        }
+        .badge-keluar {
+            color: #b91c1c;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>LAPORAN JURNAL TRANSAKSI</h2>
-        <p>Sistem Informasi Keuangan Gereja (SIKG)</p>
-    </div>
+    {{-- KOP HEADER --}}
+    <table class="kop-header">
+        <tr>
+            <td style="width: 70%; vertical-align: top;">
+                <div class="church-title">{{ $churchName ?? 'GPIB JEMAAT HOSIANA' }}</div>
+                @if(!empty($churchAddress1))
+                    <div class="church-sub">{{ $churchAddress1 }}</div>
+                @endif
+                @if(!empty($churchAddress2))
+                    <div class="church-sub">{{ $churchAddress2 }}</div>
+                @endif
+            </td>
+            <td style="width: 30%; text-align: right; vertical-align: bottom; font-size: 8pt; color: #555;">
+                Dicetak: {{ now()->translatedFormat('d F Y, H:i') }} WIB
+            </td>
+        </tr>
+    </table>
 
-    <div class="period-info">
-        <strong>Periode:</strong> {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}
-        @if($kategori)
-            | <strong>Kategori:</strong> {{ $kategori }}
+    <div class="doc-title">LAPORAN JURNAL TRANSAKSI</div>
+    <div class="period-subtitle">
+        Periode: <strong>{{ \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') }}</strong> s/d <strong>{{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}</strong>
+        @if(!empty($kategori))
+            | Kategori Akun: <strong>{{ $kategori }}</strong>
         @endif
     </div>
 
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 8%;">Tanggal</th>
+                <th style="width: 8%;" class="text-center">Tanggal</th>
                 <th style="width: 12%;">No. Bukti</th>
-                <th style="width: 8%;">Jenis</th>
+                <th style="width: 8%;" class="text-center">Jenis</th>
                 <th style="width: 18%;">Pihak Terkait</th>
-                <th style="width: 24%;">Kode & Nama Akun</th>
+                <th style="width: 22%;">Akun Anggaran</th>
                 <th style="width: 20%;">Uraian</th>
-                <th style="width: 10%;" class="text-right">Nominal (Rp)</th>
+                <th style="width: 12%;" class="text-right">Nominal (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -91,27 +130,40 @@
             @forelse($reportData as $tx)
                 @php
                     $grandTotal += $tx->nominal;
+                    $isMasuk = ($tx->voucher->jenis_voucher ?? '') === 'Masuk';
                 @endphp
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($tx->voucher->tanggal ?? now())->format('d/m/Y') }}</td>
-                    <td><strong>{{ $tx->no_bukti }}</strong></td>
-                    <td class="text-center">{{ $tx->voucher->jenis_voucher ?? '-' }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($tx->voucher->tanggal ?? now())->format('d/m/Y') }}</td>
+                    <td class="font-mono" style="font-weight: bold;">{{ $tx->no_bukti }}</td>
+                    <td class="text-center">
+                        <span class="{{ $isMasuk ? 'badge-masuk' : 'badge-keluar' }}">
+                            {{ $tx->voucher->jenis_voucher ?? '-' }}
+                        </span>
+                    </td>
                     <td>{{ $tx->voucher->pihak_terkait ?? '-' }}</td>
-                    <td><code>{{ $tx->kode_akun }}</code> - {{ $tx->chartOfAccount->nama_akun ?? '-' }}</td>
+                    <td>
+                        <span class="font-mono">{{ $tx->kode_akun }}</span> - {{ $tx->chartOfAccount->nama_akun ?? '-' }}
+                    </td>
                     <td>{{ $tx->uraian }}</td>
-                    <td class="text-right">{{ number_format($tx->nominal, 0, ',', '.') }}</td>
+                    <td class="text-right font-mono font-bold">
+                        {{ number_format($tx->nominal, 0, ',', '.') }}
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">Tidak ada transaksi yang ditemukan.</td>
+                    <td colspan="7" class="text-center" style="padding: 24px; color: #64748b;">
+                        Tidak ada transaksi yang ditemukan untuk periode dan filter yang dipilih.
+                    </td>
                 </tr>
             @endforelse
         </tbody>
         @if(count($reportData) > 0)
             <tfoot>
                 <tr class="total-row">
-                    <td colspan="6" class="text-right">GRAND TOTAL NOMINAL:</td>
-                    <td class="text-right">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                    <td colspan="6" class="text-right uppercase">GRAND TOTAL NOMINAL:</td>
+                    <td class="text-right font-mono" style="font-size: 9pt;">
+                        Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                    </td>
                 </tr>
             </tfoot>
         @endif

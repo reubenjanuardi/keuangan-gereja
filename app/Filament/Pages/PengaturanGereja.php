@@ -31,20 +31,23 @@ class PengaturanGereja extends Page implements HasForms
     protected static ?int $navigationSort = 99;
 
     // Livewire public state — bound to form fields via statePath('')
-    public string $church_name     = '';
-    public string $church_address1 = '';
-    public string $church_address2 = '';
+    public ?string $church_name     = '';
+    public ?string $church_address1 = '';
+    public ?string $church_address2 = '';
+    public $church_logo             = null;
 
     public function mount(): void
     {
         $this->church_name     = AppSetting::get('church_name',     'GPIB Jemaat Hosiana');
         $this->church_address1 = AppSetting::get('church_address1', 'Jl. Rajawali Selatan V No. 7');
         $this->church_address2 = AppSetting::get('church_address2', 'Jakarta Pusat 10772');
+        $this->church_logo     = AppSetting::get('church_logo',     '');
 
         $this->form->fill([
             'church_name'     => $this->church_name,
             'church_address1' => $this->church_address1,
             'church_address2' => $this->church_address2,
+            'church_logo'     => $this->church_logo ?: null,
         ]);
     }
 
@@ -53,9 +56,19 @@ class PengaturanGereja extends Page implements HasForms
         return $schema
             ->schema([
                 Section::make('Identitas Gereja')
-                    ->description('Data ini akan ditampilkan pada header cetakan Bukti Voucher (PDF).')
+                    ->description('Data ini digunakan untuk identitas sistem, header cetakan Bukti Voucher (PDF), dan logo pada Navbar.')
                     ->icon('heroicon-o-building-library')
                     ->schema([
+                        \Filament\Forms\Components\FileUpload::make('church_logo')
+                            ->label('Logo Gereja')
+                            ->image()
+                            ->disk('public')
+                            ->directory('church')
+                            ->visibility('public')
+                            ->imagePreviewHeight('120')
+                            ->maxSize(2048)
+                            ->helperText('Unggah logo gereja (format PNG, JPG, JPEG, SVG, WebP, maks 2MB). Jika logo diunggah, logo akan muncul pada Navbar menggantikan teks "Keuangan Gereja". Jika belum ada logo, teks "Keuangan Gereja" akan tetap dipertahankan.'),
+
                         TextInput::make('church_name')
                             ->label('Nama Gereja')
                             ->required()
@@ -93,9 +106,15 @@ class PengaturanGereja extends Page implements HasForms
     {
         $data = $this->form->getState();
 
-        AppSetting::set('church_name',     $data['church_name']);
-        AppSetting::set('church_address1', $data['church_address1']);
-        AppSetting::set('church_address2', $data['church_address2']);
+        $logo = $data['church_logo'] ?? '';
+        if (is_array($logo)) {
+            $logo = array_values($logo)[0] ?? '';
+        }
+
+        AppSetting::set('church_name',     $data['church_name'] ?? '');
+        AppSetting::set('church_address1', $data['church_address1'] ?? '');
+        AppSetting::set('church_address2', $data['church_address2'] ?? '');
+        AppSetting::set('church_logo',     (string) $logo);
 
         Notification::make()
             ->title('Pengaturan berhasil disimpan.')
