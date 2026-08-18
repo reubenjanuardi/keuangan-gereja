@@ -29,9 +29,9 @@ RUN composer install \
     --ignore-platform-reqs
 
 # ==========================================
-# STAGE 3: Production Runtime (PHP 8.3 + Nginx)
+# STAGE 3: Production Runtime (PHP 8.4 + Nginx)
 # ==========================================
-FROM php:8.3-fpm-alpine AS runner
+FROM php:8.4-fpm-alpine AS runner
 
 # Install system dependencies & PostgreSQL libraries
 RUN apk add --no-cache \
