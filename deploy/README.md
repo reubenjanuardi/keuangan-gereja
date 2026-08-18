@@ -68,6 +68,8 @@ Buka repository Anda di GitHub -> **Settings -> Secrets and variables -> Actions
 | `VPS_SSH_PORT` | Port SSH VPS (default 22) | `22` |
 | `VPS_DEPLOY_PATH` | Path direktori stack di VPS | `/opt/stacks/keuangan-gereja` |
 
+> Catatan `VPS_SSH_KEY`: simpan isi private key lengkap tanpa tambahan tanda kutip. Format multi-line maupun format satu baris dengan `\n` keduanya didukung oleh workflow deploy.
+
 ---
 
 ## 4. Setup Server VPS
