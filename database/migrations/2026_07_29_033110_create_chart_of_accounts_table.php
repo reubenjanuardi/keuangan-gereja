@@ -11,22 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Langkah 1: Buat tabel dan pastikan kolom target unik
         Schema::create('chart_of_accounts', function (Blueprint $table) {
-            $table->string('kode_akun')->primary()->unique();
+            $table->id();
+            $table->string('kode_akun')->unique();
             $table->string('nama_akun');
-            $table->enum('kategori', ['Penerimaan', 'Pengeluaran', 'Kas & Bank', 'Hutang / Piutang']);
-
-            // Kolom untuk menentukan siapa induknya (Bisa null jika dia adalah level teratas)
             $table->string('parent_code')->nullable();
-
-            // Penanda: Apakah akun ini bisa dipilih untuk transaksi? 
-            // (Induk biasanya FALSE, Anak biasanya TRUE)
-            $table->boolean('is_postable')->default(true);
-
             $table->timestamps();
+        });
 
-            // Relasi ke dirinya sendiri (Self-referencing)
-            $table->foreign('parent_code')->references('kode_akun')->on('chart_of_accounts')->cascadeOnUpdate();
+        // Langkah 2: Tambahkan relasi foreign key di blok terpisah
+        Schema::table('chart_of_accounts', function (Blueprint $table) {
+            $table->foreign('parent_code')
+                ->references('kode_akun')
+                ->on('chart_of_accounts')
+                ->onUpdate('cascade');
         });
     }
 
