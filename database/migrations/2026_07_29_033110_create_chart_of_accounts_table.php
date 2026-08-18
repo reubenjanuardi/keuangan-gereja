@@ -16,7 +16,9 @@ return new class extends Migration
             $table->id();
             $table->string('kode_akun')->unique();
             $table->string('nama_akun');
+            $table->string('kategori')->nullable();
             $table->string('parent_code')->nullable();
+            $table->boolean('is_postable')->default(true);
             $table->timestamps();
         });
 
