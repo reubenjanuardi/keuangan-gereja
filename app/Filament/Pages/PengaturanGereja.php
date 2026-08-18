@@ -62,7 +62,7 @@ class PengaturanGereja extends Page implements HasForms
                         \Filament\Forms\Components\FileUpload::make('church_logo')
                             ->label('Logo Gereja')
                             ->image()
-                            ->disk('public')
+                            ->disk(config('filesystems.default') === 's3' ? 's3' : 'public')
                             ->directory('church')
                             ->visibility('public')
                             ->imagePreviewHeight('120')

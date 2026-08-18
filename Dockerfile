@@ -70,6 +70,9 @@ WORKDIR /var/www/html
 
 # Buat direktori wajib Laravel & Nginx runtime
 RUN mkdir -p \
+    /var/www/html/storage/app/public \
+    /var/www/html/storage/app/private/livewire-tmp \
+    /var/www/html/storage/app/livewire-tmp \
     /var/www/html/storage/framework/cache/data \
     /var/www/html/storage/framework/sessions \
     /var/www/html/storage/framework/views \
