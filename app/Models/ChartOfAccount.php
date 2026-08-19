@@ -23,7 +23,9 @@ class ChartOfAccount extends Model
 
     public function children()
     {
-        return $this->hasMany(ChartOfAccount::class, 'parent_code', 'kode_akun')->orderBy('kode_akun');
+        return $this->hasMany(ChartOfAccount::class, 'parent_code', 'kode_akun')
+            ->with('children')
+            ->orderBy('kode_akun');
     }
 
     public function transactions()
@@ -33,7 +35,7 @@ class ChartOfAccount extends Model
 
     public function getIsGroupAttribute(): bool
     {
-        return !$this->is_postable || $this->children()->exists();
+        return !$this->is_postable || $this->children->isNotEmpty();
     }
 
     /**
