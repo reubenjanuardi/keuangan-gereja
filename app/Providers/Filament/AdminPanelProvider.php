@@ -35,14 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('web')
             ->brandName('Keuangan Gereja')
             ->brandLogo(function () {
-                $logo = AppSetting::get('church_logo');
-                if ($logo) {
-                    $disk = config('filesystems.default') === 's3' ? 's3' : 'public';
-                    if (Storage::disk($disk)->exists($logo)) {
-                        return Storage::disk($disk)->url($logo);
-                    }
-                }
-                return null;
+                return AppSetting::getLogoUrl();
             })
             ->brandLogoHeight('2.5rem')
             ->colors([

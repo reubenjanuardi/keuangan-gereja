@@ -104,8 +104,10 @@ DB_USERNAME=postgres.your-project-ref
 DB_PASSWORD=your-supabase-db-password
 DB_SSLMODE=require
 
-# Cloudflare R2 Storage
-FILESYSTEM_DISK=s3
+# Storage (Penyimpanan Logo Lokal di VPS)
+FILESYSTEM_DISK=local
+
+# Cloudflare R2 Storage (Opsional / Fitur Masa Depan)
 AWS_ACCESS_KEY_ID=your_r2_access_key_id
 AWS_SECRET_ACCESS_KEY=your_r2_secret_access_key
 AWS_DEFAULT_REGION=auto

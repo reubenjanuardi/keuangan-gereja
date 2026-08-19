@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class AppSetting extends Model
 {
@@ -26,4 +27,22 @@ class AppSetting extends Model
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
     }
+
+    /**
+     * Get the public URL for the church logo from local public storage, or null if not set.
+     */
+    public static function getLogoUrl(): ?string
+    {
+        $logo = static::get('church_logo');
+        if (empty($logo)) {
+            return null;
+        }
+
+        if (filter_var($logo, FILTER_VALIDATE_URL)) {
+            return $logo;
+        }
+
+        return Storage::disk('public')->url($logo);
+    }
 }
+
