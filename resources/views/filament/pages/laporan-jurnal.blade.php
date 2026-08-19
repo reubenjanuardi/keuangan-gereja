@@ -145,7 +145,7 @@
                     @forelse($this->reportData as $tx)
                         @php
                             $grandTotal += $tx->nominal;
-                            $isMasuk = ($tx->voucher->jenis_voucher ?? '') === 'Masuk';
+                            $isMasuk = in_array($tx->voucher->jenis_voucher ?? '', ['Masuk', 'BKM', 'BBM'], true);
                         @endphp
                         <tr>
                             <td style="color: #475569; white-space: nowrap;">
@@ -154,9 +154,9 @@
                             <td class="col-code">{{ $tx->no_bukti }}</td>
                             <td style="text-align: center; white-space: nowrap;">
                                 @if($isMasuk)
-                                    <span class="badge-masuk">Masuk</span>
+                                    <span class="badge-masuk">{{ in_array($tx->voucher->jenis_voucher ?? '', ['BKM', 'BBM']) ? $tx->voucher->jenis_voucher : 'Masuk' }}</span>
                                 @else
-                                    <span class="badge-keluar">Keluar</span>
+                                    <span class="badge-keluar">{{ in_array($tx->voucher->jenis_voucher ?? '', ['BKK', 'BBK']) ? $tx->voucher->jenis_voucher : 'Keluar' }}</span>
                                 @endif
                             </td>
                             <td style="color: #334155;">{{ $tx->voucher->pihak_terkait ?? '-' }}</td>

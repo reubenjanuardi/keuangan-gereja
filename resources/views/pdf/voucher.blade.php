@@ -223,16 +223,30 @@
     {{-- ══════════════════════════════════════════════════ --}}
     {{-- DOCUMENT TITLE --}}
     {{-- ══════════════════════════════════════════════════ --}}
+    @php
+        $voucherTitle = match($voucher->jenis_voucher) {
+            'BKM' => 'BUKTI KAS MASUK (BKM)',
+            'BKK' => 'BUKTI KAS KELUAR (BKK)',
+            'BBM' => 'BUKTI BANK MASUK (BBM)',
+            'BBK' => 'BUKTI BANK KELUAR (BBK)',
+            'Masuk' => 'BUKTI KAS / BANK MASUK',
+            'Keluar' => 'BUKTI KAS / BANK KELUAR',
+            default => 'BUKTI KAS / BANK ' . strtoupper($voucher->jenis_voucher),
+        };
+        $pihakLabel = (method_exists($voucher, 'isMasuk') ? $voucher->isMasuk() : ($voucher->jenis_voucher === 'Masuk'))
+            ? 'Terima dari'
+            : 'Dibayarkan kepada';
+    @endphp
     <div class="doc-title">
-        BUKTI KAS / BANK {{ strtoupper($voucher->jenis_voucher) }}
+        {{ $voucherTitle }}
     </div>
 
     {{-- ══════════════════════════════════════════════════ --}}
-    {{-- TERIMA DARI + TERBILANG --}}
+    {{-- TERIMA DARI / DIBAYARKAN KEPADA + TERBILANG --}}
     {{-- ══════════════════════════════════════════════════ --}}
     <table class="meta-table">
         <tr>
-            <td class="meta-label">Terima dari</td>
+            <td class="meta-label">{{ $pihakLabel }}</td>
             <td class="meta-colon">:</td>
             <td>{{ $voucher->pihak_terkait }}</td>
         </tr>

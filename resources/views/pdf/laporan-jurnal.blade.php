@@ -130,7 +130,7 @@
             @forelse($reportData as $tx)
                 @php
                     $grandTotal += $tx->nominal;
-                    $isMasuk = ($tx->voucher->jenis_voucher ?? '') === 'Masuk';
+                    $isMasuk = in_array($tx->voucher->jenis_voucher ?? '', ['Masuk', 'BKM', 'BBM'], true);
                 @endphp
                 <tr>
                     <td class="text-center">{{ \Carbon\Carbon::parse($tx->voucher->tanggal ?? now())->format('d/m/Y') }}</td>

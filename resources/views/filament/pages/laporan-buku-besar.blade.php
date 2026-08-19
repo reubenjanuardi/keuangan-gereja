@@ -99,8 +99,8 @@
         @forelse($this->reportData as $kodeAkun => $transactions)
             @php
                 $firstCoa = $transactions->first()->chartOfAccount ?? null;
-                $totalMasuk = $transactions->filter(fn($t) => ($t->voucher->jenis_voucher ?? '') === 'Masuk')->sum('nominal');
-                $totalKeluar = $transactions->filter(fn($t) => ($t->voucher->jenis_voucher ?? '') === 'Keluar')->sum('nominal');
+                $totalMasuk = $transactions->filter(fn($t) => in_array($t->voucher->jenis_voucher ?? '', ['Masuk', 'BKM', 'BBM'], true))->sum('nominal');
+                $totalKeluar = $transactions->filter(fn($t) => in_array($t->voucher->jenis_voucher ?? '', ['Keluar', 'BKK', 'BBK'], true))->sum('nominal');
                 $netSaldo = $totalMasuk - $totalKeluar;
             @endphp
 
@@ -146,7 +146,7 @@
                         <tbody>
                             @foreach($transactions as $tx)
                                 @php
-                                    $isMasuk = ($tx->voucher->jenis_voucher ?? '') === 'Masuk';
+                                    $isMasuk = in_array($tx->voucher->jenis_voucher ?? '', ['Masuk', 'BKM', 'BBM'], true);
                                 @endphp
                                 <tr>
                                     <td class="col-code">{{ $tx->no_bukti }}</td>

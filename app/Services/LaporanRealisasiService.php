@@ -176,7 +176,8 @@ class LaporanRealisasiService
         foreach ($txBefore as $row) {
             $nominal = (float) $row->total;
             $current = $saldoAwalMap[$row->kode_akun] ?? 0.0;
-            $saldoAwalMap[$row->kode_akun] = $current + (($row->jenis_voucher === 'Keluar') ? -$nominal : $nominal);
+            $isKeluar = in_array($row->jenis_voucher, ['Keluar', 'BKK', 'BBK'], true);
+            $saldoAwalMap[$row->kode_akun] = $current + ($isKeluar ? -$nominal : $nominal);
         }
 
         // 2. Transactions during period [startDate, endDate]
@@ -192,7 +193,8 @@ class LaporanRealisasiService
         foreach ($txDuring as $row) {
             $nominal = (float) $row->total;
             $current = $mutasiMap[$row->kode_akun] ?? 0.0;
-            $mutasiMap[$row->kode_akun] = $current + (($row->jenis_voucher === 'Keluar') ? -$nominal : $nominal);
+            $isKeluar = in_array($row->jenis_voucher, ['Keluar', 'BKK', 'BBK'], true);
+            $mutasiMap[$row->kode_akun] = $current + ($isKeluar ? -$nominal : $nominal);
         }
 
         // Build account map

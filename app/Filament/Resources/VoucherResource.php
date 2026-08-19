@@ -40,10 +40,12 @@ class VoucherResource extends Resource
                 ->required()
                 ->maxLength(255)
                 ->unique(ignoreRecord: true)
-                ->rule('regex:/^[^,]+$/')
+                ->rule('regex:/^[^\s,]+$/')
                 ->validationMessages([
-                    'regex' => 'Format Nomor Bukti harus kontinu dan tidak boleh menggunakan tanda koma.',
+                    'regex' => 'Format Nomor Bukti harus kontinu (menyambung) dan tidak boleh mengandung spasi atau tanda koma (,).',
+                    'unique' => 'Nomor Bukti sudah digunakan.',
                 ])
+                ->dehydrateStateUsing(fn (?string $state) => $state ? str_replace([',', ' '], ['', ''], $state) : $state)
                 ->disabled(fn(string $operation): bool => $operation === 'edit')
                 ->dehydrated(fn(string $operation): bool => $operation === 'create'),
 
@@ -60,9 +62,34 @@ class VoucherResource extends Resource
                 ->label('Jenis Voucher')
                 ->required()
                 ->options([
-                    'Masuk'  => 'Masuk',
-                    'Keluar' => 'Keluar',
-                ]),
+                    'BKM' => 'Bukti Kas Masuk (BKM)',
+                    'BKK' => 'Bukti Kas Keluar (BKK)',
+                    'BBM' => 'Bukti Bank Masuk (BBM)',
+                    'BBK' => 'Bukti Bank Keluar (BBK)',
+                ])
+                ->live()
+                ->afterStateUpdated(function (?string $state, $set, $get, string $operation): void {
+                    if ($operation !== 'create' || ! $state) {
+                        return;
+                    }
+
+                    $currentNo = (string) ($get('no_bukti') ?? '');
+                    $prefixes = ['BKM', 'BKK', 'BBM', 'BBK'];
+                    $matched = false;
+
+                    foreach ($prefixes as $prefix) {
+                        if (str_starts_with($currentNo, $prefix)) {
+                            $suffix = substr($currentNo, strlen($prefix));
+                            $set('no_bukti', $state . $suffix);
+                            $matched = true;
+                            break;
+                        }
+                    }
+
+                    if (! $matched) {
+                        $set('no_bukti', $state . $currentNo);
+                    }
+                }),
 
             // ─── Mata Anggaran ────────────────────────────────────────────────────
             // Satu voucher = satu mata anggaran. Dipilih di level header.
@@ -165,9 +192,16 @@ class VoucherResource extends Resource
                 TextColumn::make('jenis_voucher')
                     ->badge()
                     ->sortable()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'BKM' => 'BKM (Kas Masuk)',
+                        'BKK' => 'BKK (Kas Keluar)',
+                        'BBM' => 'BBM (Bank Masuk)',
+                        'BBK' => 'BBK (Bank Keluar)',
+                        default => $state,
+                    })
                     ->color(fn(string $state): string => match ($state) {
-                        'Masuk' => 'success',
-                        'Keluar' => 'danger',
+                        'Masuk', 'BKM', 'BBM' => 'success',
+                        'Keluar', 'BKK', 'BBK' => 'danger',
                         default => 'gray',
                     }),
 

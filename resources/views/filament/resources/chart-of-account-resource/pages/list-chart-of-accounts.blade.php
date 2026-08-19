@@ -253,7 +253,7 @@
             {{-- Table Header Bar --}}
             <div class="coa-header">
                 <div>Nama & Kode Akun</div>
-                <div>Aggregated Balance</div>
+                <div>Budget (Anggaran PKA)</div>
             </div>
 
             {{-- Tree Content --}}

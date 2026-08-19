@@ -18,6 +18,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use BackedEnum;
 use UnitEnum;
 
@@ -30,6 +31,11 @@ class ChartOfAccountResource extends Resource
     protected static UnitEnum|string|null $navigationGroup = 'Master Data';
 
     protected static ?string $recordTitleAttribute = 'nama_akun';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['children', 'parent']);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -47,6 +53,14 @@ class ChartOfAccountResource extends Resource
                 ->label('Nama Akun')
                 ->required()
                 ->maxLength(255),
+
+            TextInput::make('budget')
+                ->label('Budget (Anggaran PKA)')
+                ->numeric()
+                ->prefix('Rp')
+                ->default(0)
+                ->minValue(0)
+                ->helperText('Patokan anggaran statis tahunan untuk akun ini.'),
 
             Select::make('kategori')
                 ->required()
@@ -87,6 +101,12 @@ class ChartOfAccountResource extends Resource
                     ->formatStateUsing(function (string $state, ChartOfAccount $record): string {
                         return $record->parent_code ? '↳ ' . $state : $state;
                     }),
+
+                TextColumn::make('budget')
+                    ->label('Budget (Anggaran)')
+                    ->formatStateUsing(fn ($state): string => 'Rp ' . number_format((float) ($state ?? 0), 0, ',', '.'))
+                    ->sortable()
+                    ->alignEnd(),
 
                 TextColumn::make('kategori')
                     ->badge()

@@ -76,6 +76,10 @@ class LaporanBukuBesar extends Page implements HasForms
                     ->label('Jenis Voucher')
                     ->placeholder('-- Semua --')
                     ->options([
+                        'BKM' => 'Bukti Kas Masuk (BKM)',
+                        'BKK' => 'Bukti Kas Keluar (BKK)',
+                        'BBM' => 'Bukti Bank Masuk (BBM)',
+                        'BBK' => 'Bukti Bank Keluar (BBK)',
                         'Masuk' => 'Masuk',
                         'Keluar' => 'Keluar',
                     ])

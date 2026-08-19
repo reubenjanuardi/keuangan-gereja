@@ -11,6 +11,11 @@ class ChartOfAccount extends Model
     protected $keyType = 'string';
     protected $guarded = [];
 
+    protected $casts = [
+        'budget' => 'float',
+        'is_postable' => 'boolean',
+    ];
+
     public function parent()
     {
         return $this->belongsTo(ChartOfAccount::class, 'parent_code', 'kode_akun');

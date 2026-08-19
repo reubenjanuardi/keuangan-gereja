@@ -53,7 +53,7 @@ class ListChartOfAccounts extends ListRecords
 
     public function getTreeNodesProperty(): Collection
     {
-        $query = ChartOfAccount::query()->with(['children' => fn($q) => $q->orderBy('kode_akun')]);
+        $query = ChartOfAccount::query()->with(['children' => fn($q) => $q->orderBy('kode_akun'), 'parent']);
 
         if (!empty($this->search)) {
             $term = strtolower($this->search);
@@ -124,6 +124,14 @@ class ListChartOfAccounts extends ListRecords
                     ->required()
                     ->maxLength(255),
 
+                TextInput::make('budget')
+                    ->label('Budget (Anggaran PKA)')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->default(0)
+                    ->minValue(0)
+                    ->helperText('Patokan anggaran statis tahunan untuk akun ini.'),
+
                 Select::make('kategori')
                     ->label('Kategori')
                     ->required()
@@ -174,6 +182,7 @@ class ListChartOfAccounts extends ListRecords
                 return [
                     'parent_code' => $parentCode,
                     'kategori' => $parent?->kategori ?? 'Penerimaan',
+                    'budget' => 0,
                     'is_postable' => true,
                 ];
             })
@@ -193,6 +202,14 @@ class ListChartOfAccounts extends ListRecords
                     ->label('Nama Akun')
                     ->required()
                     ->maxLength(255),
+
+                TextInput::make('budget')
+                    ->label('Budget (Anggaran PKA)')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->default(0)
+                    ->minValue(0)
+                    ->helperText('Patokan anggaran statis tahunan untuk akun ini.'),
 
                 Select::make('kategori')
                     ->label('Kategori')
@@ -241,6 +258,7 @@ class ListChartOfAccounts extends ListRecords
                 return [
                     'kode_akun' => $account->kode_akun,
                     'nama_akun' => $account->nama_akun,
+                    'budget' => (float) ($account->budget ?? 0),
                     'kategori' => $account->kategori,
                     'parent_code' => $account->parent_code,
                     'is_postable' => (bool) $account->is_postable,
@@ -256,6 +274,14 @@ class ListChartOfAccounts extends ListRecords
                     ->label('Nama Akun')
                     ->required()
                     ->maxLength(255),
+
+                TextInput::make('budget')
+                    ->label('Budget (Anggaran PKA)')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->default(0)
+                    ->minValue(0)
+                    ->helperText('Patokan anggaran statis tahunan untuk akun ini.'),
 
                 Select::make('kategori')
                     ->label('Kategori')
@@ -281,6 +307,7 @@ class ListChartOfAccounts extends ListRecords
                 $account = ChartOfAccount::findOrFail($arguments['kode_akun']);
                 $account->update([
                     'nama_akun' => $data['nama_akun'],
+                    'budget' => $data['budget'] ?? 0,
                     'kategori' => $data['kategori'],
                     'parent_code' => $data['parent_code'] ?? null,
                     'is_postable' => $data['is_postable'],

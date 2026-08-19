@@ -4,11 +4,8 @@
     $hasChildren = $node->children->count() > 0;
     $isGroup = $node->is_group;
     $isExpanded = in_array($node->kode_akun, $this->expandedNodes) || !empty($this->search);
-    $balance = $node->total_balance;
-    $formattedBalance = 'Rp ' . number_format(abs($balance), 2, ',', '.');
-    $balanceSuffix = $node->kategori === 'Pengeluaran'
-        ? ($balance >= 0 ? 'Dr' : 'Cr')
-        : ($balance >= 0 ? 'Cr' : 'Dr');
+    $budget = (float) ($node->budget ?? 0);
+    $formattedBudget = 'Rp ' . number_format($budget, 0, ',', '.');
 @endphp
 
 <div class="coa-node-wrapper border-b border-gray-100 dark:border-gray-800/60">
@@ -116,9 +113,9 @@
                 @endif
             </div>
 
-            {{-- Balance --}}
-            <div style="text-align: right; min-width: 130px; font-family: monospace; font-size: 0.875rem; font-weight: {{ $balance != 0 ? '600' : '400' }}; color: {{ $balance != 0 ? '#111827' : '#9ca3af' }};">
-                {{ $formattedBalance }} <span style="font-size: 0.75rem; font-family: sans-serif; font-weight: 400; color: #9ca3af;">{{ $balanceSuffix }}</span>
+            {{-- Budget (Anggaran PKA) --}}
+            <div style="text-align: right; min-width: 130px; font-family: monospace; font-size: 0.875rem; font-weight: {{ $budget > 0 ? '600' : '400' }}; color: {{ $budget > 0 ? '#111827' : '#9ca3af' }};">
+                {{ $formattedBudget }}
             </div>
         </div>
     </div>
