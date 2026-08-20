@@ -38,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
                 return AppSetting::getLogoUrl();
             })
             ->brandLogoHeight('2.5rem')
+            ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::Indigo,
             ])
