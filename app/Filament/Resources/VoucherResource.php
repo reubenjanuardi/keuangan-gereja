@@ -16,6 +16,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -115,25 +117,29 @@ class VoucherResource extends Resource
             Repeater::make('transactions')
                 ->label('Detail Item Transaksi')
                 ->relationship()
-                ->live()
                 ->minItems(1)
                 ->addActionLabel('Tambah Item')
-                ->afterStateHydrated(function ($state, $set): void {
-                    $set('total_nominal', static::calculateTotalNominal($state ?? []));
+                ->afterStateHydrated(function (Get $get, Set $set): void {
+                    static::updateTotalNominal($get, $set);
                 })
-                ->afterStateUpdated(function ($state, $set): void {
-                    $set('total_nominal', static::calculateTotalNominal($state ?? []));
+                ->afterStateUpdated(function (Get $get, Set $set): void {
+                    static::updateTotalNominal($get, $set);
                 })
                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data, Repeater $component): array {
-                    // Access the Livewire component's public property for kode_akun.
-                    // The Livewire state always reflects the current form header value.
+                    $record = $component->getModelInstance();
                     $livewire = $component->getLivewire();
-                    $data['kode_akun'] = data_get($livewire, 'data.kode_akun') ?? '';
+                    $kodeAkun = $record?->kode_akun
+                        ?? data_get($livewire, 'data.kode_akun')
+                        ?? data_get($component->getContainer()->getRawState(), 'kode_akun');
+                    $data['kode_akun'] = $kodeAkun;
                     return $data;
                 })
                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data, Repeater $component): array {
+                    $record = $component->getModelInstance();
                     $livewire = $component->getLivewire();
-                    $kodeAkun = data_get($livewire, 'data.kode_akun');
+                    $kodeAkun = $record?->kode_akun
+                        ?? data_get($livewire, 'data.kode_akun')
+                        ?? data_get($component->getContainer()->getRawState(), 'kode_akun');
                     if ($kodeAkun) {
                         $data['kode_akun'] = $kodeAkun;
                     }
@@ -152,9 +158,8 @@ class VoucherResource extends Resource
                         ->inputMode('decimal')
                         ->prefix('Rp')
                         ->live(onBlur: true)
-                        ->afterStateUpdated(function ($get, $set): void {
-                            $transactions = $get('../../') ?? [];
-                            $set('../../total_nominal', static::calculateTotalNominal($transactions));
+                        ->afterStateUpdated(function (Get $get, Set $set): void {
+                            static::updateTotalNominal($get, $set);
                         }),
                 ])
                 ->columns(3),
@@ -242,14 +247,32 @@ class VoucherResource extends Resource
         ];
     }
 
-    public static function calculateTotalNominal(array $transactions): float
+    public static function updateTotalNominal(Get $get, Set $set): void
     {
-        return collect($transactions)->sum(function (mixed $transaction): float {
+        $transactions = $get('transactions') ?? $get('/transactions') ?? [];
+        $total = static::calculateTotalNominal($transactions);
+        $set('total_nominal', $total);
+        $set('/total_nominal', $total);
+    }
+
+    public static function calculateTotalNominal(mixed $transactions): float
+    {
+        if (! is_iterable($transactions)) {
+            return 0.0;
+        }
+
+        return (float) collect($transactions)->sum(function (mixed $transaction): float {
             if (! is_array($transaction)) {
-                return 0;
+                return 0.0;
             }
 
-            return (float) ($transaction['nominal'] ?? 0);
+            $nominal = $transaction['nominal'] ?? 0;
+
+            if (is_string($nominal)) {
+                $nominal = str_replace([' ', ','], ['', ''], $nominal);
+            }
+
+            return is_numeric($nominal) ? (float) $nominal : 0.0;
         });
     }
 

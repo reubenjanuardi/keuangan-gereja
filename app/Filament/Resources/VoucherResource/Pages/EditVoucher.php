@@ -7,8 +7,6 @@ use App\Models\Voucher;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class EditVoucher extends EditRecord
 {
@@ -28,34 +26,13 @@ class EditVoucher extends EditRecord
     }
 
     /**
-     * Inject kode_akun from the voucher header into every transaction row
-     * before Filament's Repeater syncs the relationship.
+     * Ensure total_nominal is accurately computed before record save.
      */
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $kodeAkun = $data['kode_akun'] ?? null;
-
-        // Propagate header kode_akun into each transaction row
-        if ($kodeAkun && isset($data['transactions'])) {
-            $data['transactions'] = array_map(function (array $tx) use ($kodeAkun): array {
-                $tx['kode_akun'] = $kodeAkun;
-                return $tx;
-            }, $data['transactions']);
-        }
-
         $data['total_nominal'] = VoucherResource::calculateTotalNominal($data['transactions'] ?? []);
 
         return $data;
-    }
-
-    /**
-     * Wrap entire Voucher + Transactions update in a DB transaction.
-     */
-    protected function handleRecordUpdate(Model $record, array $data): Model
-    {
-        return DB::transaction(function () use ($record, $data): Model {
-            return parent::handleRecordUpdate($record, $data);
-        });
     }
 
     /**

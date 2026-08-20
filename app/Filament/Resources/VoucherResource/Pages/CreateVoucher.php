@@ -5,43 +5,19 @@ namespace App\Filament\Resources\VoucherResource\Pages;
 use App\Filament\Resources\VoucherResource;
 use App\Models\Voucher;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class CreateVoucher extends CreateRecord
 {
     protected static string $resource = VoucherResource::class;
 
     /**
-     * Inject kode_akun from the voucher header into every transaction row
-     * before Filament's Repeater processes the relationship.
-     * This enforces the business rule: one voucher = one mata anggaran.
+     * Ensure total_nominal is accurately computed before record creation.
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $kodeAkun = $data['kode_akun'] ?? null;
-
-        // Propagate header kode_akun into each transaction row
-        if ($kodeAkun && isset($data['transactions'])) {
-            $data['transactions'] = array_map(function (array $tx) use ($kodeAkun): array {
-                $tx['kode_akun'] = $kodeAkun;
-                return $tx;
-            }, $data['transactions']);
-        }
-
         $data['total_nominal'] = VoucherResource::calculateTotalNominal($data['transactions'] ?? []);
 
         return $data;
-    }
-
-    /**
-     * Wrap entire Voucher + Transactions creation in a DB transaction.
-     */
-    protected function handleRecordCreation(array $data): Model
-    {
-        return DB::transaction(function () use ($data): Model {
-            return parent::handleRecordCreation($data);
-        });
     }
 
     /**
