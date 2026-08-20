@@ -2,20 +2,20 @@
     <style>
         .report-section {
             margin-top: 20px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
             background: #ffffff;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             overflow: hidden;
         }
         .dark .report-section {
-            border-color: #27272a;
+            border-color: rgba(255, 255, 255, 0.1);
             background: #18181b;
         }
         .report-section-header {
             padding: 14px 20px;
             background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -23,8 +23,8 @@
             gap: 10px;
         }
         .dark .report-section-header {
-            background: #27272a;
-            border-color: #3f3f46;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         table.data-table {
             width: 100%;
@@ -43,33 +43,37 @@
             border-bottom: 1px solid #cbd5e1;
         }
         .dark table.data-table th {
-            background: #27272a;
-            color: #a1a1aa;
-            border-color: #3f3f46;
+            background: rgba(255, 255, 255, 0.02);
+            color: #9ca3af;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         table.data-table td {
             padding: 9px 16px;
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
+            color: #334155;
         }
         .dark table.data-table td {
-            border-color: #27272a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #d1d5db;
         }
         table.data-table tr:hover td {
             background-color: #f8fafc;
         }
         .dark table.data-table tr:hover td {
-            background-color: rgba(39, 39, 42, 0.5);
+            background-color: rgba(255, 255, 255, 0.03);
         }
         table.data-table tfoot td {
             background: #f8fafc;
             font-weight: 700;
             padding: 14px 16px;
             border-top: 2px solid #cbd5e1;
+            color: #1e293b;
         }
         .dark table.data-table tfoot td {
-            background: #27272a;
-            border-color: #52525b;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
         }
         .col-num {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -81,11 +85,21 @@
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             font-size: 12px;
             font-weight: 700;
-            color: #2563eb;
+            color: #4f46e5;
             white-space: nowrap;
         }
         .dark .col-code {
-            color: #60a5fa;
+            color: #818cf8;
+        }
+        .badge-counter {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+        .dark .badge-counter {
+            background: rgba(255, 255, 255, 0.05);
+            color: #9ca3af;
+            border-color: rgba(255, 255, 255, 0.1);
         }
         .badge-masuk {
             display: inline-flex;
@@ -98,6 +112,11 @@
             color: #047857;
             border: 1px solid #a7f3d0;
         }
+        .dark .badge-masuk {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
         .badge-keluar {
             display: inline-flex;
             align-items: center;
@@ -109,6 +128,11 @@
             color: #be123c;
             border: 1px solid #fecdd3;
         }
+        .dark .badge-keluar {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fb7185;
+            border-color: rgba(251, 113, 133, 0.3);
+        }
     </style>
 
     {{-- Form Filter Section --}}
@@ -119,10 +143,10 @@
     {{-- Journal Table Section --}}
     <div class="report-section">
         <div class="report-section-header">
-            <span style="font-size: 16px; font-weight: 700; color: #0f172a;" class="dark:text-white">
+            <span class="text-base font-bold text-gray-900 dark:text-white">
                 Laporan Jurnal Transaksi
             </span>
-            <span style="font-size: 12px; font-weight: 600; background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <span class="badge-counter text-xs font-semibold px-2.5 py-1 rounded-md">
                 Total: {{ count($this->reportData) }} Baris Transaksi
             </span>
         </div>
@@ -148,7 +172,7 @@
                             $isMasuk = in_array($tx->voucher->jenis_voucher ?? '', ['Masuk', 'BKM', 'BBM'], true);
                         @endphp
                         <tr>
-                            <td style="color: #475569; white-space: nowrap;">
+                            <td class="text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                 {{ \Carbon\Carbon::parse($tx->voucher->tanggal ?? now())->format('d/m/Y') }}
                             </td>
                             <td class="col-code">{{ $tx->no_bukti }}</td>
@@ -159,19 +183,19 @@
                                     <span class="badge-keluar">{{ in_array($tx->voucher->jenis_voucher ?? '', ['BKK', 'BBK']) ? $tx->voucher->jenis_voucher : 'Keluar' }}</span>
                                 @endif
                             </td>
-                            <td style="color: #334155;">{{ $tx->voucher->pihak_terkait ?? '-' }}</td>
+                            <td class="text-gray-700 dark:text-gray-300">{{ $tx->voucher->pihak_terkait ?? '-' }}</td>
                             <td>
-                                <span style="font-family: monospace; font-size: 12px; font-weight: 700; color: #0f172a;" class="dark:text-white">{{ $tx->kode_akun }}</span>
-                                <span style="font-size: 12px; color: #64748b; margin-left: 4px;">- {{ $tx->chartOfAccount->nama_akun ?? '-' }}</span>
+                                <span class="font-mono text-xs font-bold text-gray-900 dark:text-white">{{ $tx->kode_akun }}</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">- {{ $tx->chartOfAccount->nama_akun ?? '-' }}</span>
                             </td>
-                            <td style="color: #0f172a;" class="dark:text-gray-100">{{ $tx->uraian }}</td>
-                            <td class="col-num" style="font-weight: 700; color: #0f172a;" class="dark:text-white">
+                            <td class="text-gray-800 dark:text-gray-200">{{ $tx->uraian }}</td>
+                            <td class="col-num font-bold text-gray-900 dark:text-gray-100">
                                 Rp {{ number_format($tx->nominal, 0, ',', '.') }}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                            <td colspan="7" class="text-center py-10 text-gray-400 dark:text-gray-500">
                                 Tidak ada transaksi yang ditemukan untuk periode dan filter yang dipilih.
                             </td>
                         </tr>
@@ -180,10 +204,10 @@
                 @if(count($this->reportData) > 0)
                     <tfoot>
                         <tr>
-                            <td colspan="6" style="text-align: right; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;">
+                            <td colspan="6" class="text-right uppercase text-xs tracking-wider text-gray-700 dark:text-gray-300 font-bold">
                                 GRAND TOTAL NOMINAL:
                             </td>
-                            <td class="col-num" style="color: #1d4ed8; font-size: 16px; font-weight: 800;">
+                            <td class="col-num text-indigo-600 dark:text-indigo-400 text-base font-extrabold">
                                 Rp {{ number_format($grandTotal, 0, ',', '.') }}
                             </td>
                         </tr>

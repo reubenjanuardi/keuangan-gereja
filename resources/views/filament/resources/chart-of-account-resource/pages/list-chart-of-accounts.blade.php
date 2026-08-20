@@ -16,8 +16,8 @@
             margin-bottom: 1rem;
         }
         .dark .coa-toolbar {
-            background-color: #111827;
-            border-color: #1f2937;
+            background-color: #18181b;
+            border-color: rgba(255, 255, 255, 0.1);
         }
         .coa-search-wrapper {
             position: relative;
@@ -35,6 +35,9 @@
             pointer-events: none;
             color: #9ca3af;
         }
+        .dark .coa-search-icon {
+            color: #9ca3af;
+        }
         .coa-search-input {
             width: 100%;
             padding: 0.5rem 0.75rem 0.5rem 2.25rem;
@@ -45,11 +48,23 @@
             color: #111827;
             outline: none;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .coa-search-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
         .dark .coa-search-input {
-            background-color: #1f2937;
-            border-color: #374151;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
             color: #f9fafb;
+        }
+        .dark .coa-search-input::placeholder {
+            color: #6b7280;
+        }
+        .dark .coa-search-input:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.25);
         }
         .coa-btn-secondary {
             display: inline-flex;
@@ -59,22 +74,28 @@
             font-size: 0.75rem;
             font-weight: 600;
             color: #374151;
-            background-color: #f3f4f6;
+            background-color: #ffffff;
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
             cursor: pointer;
-            transition: background-color 0.15s ease;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .coa-btn-secondary:hover {
-            background-color: #e5e7eb;
+            background-color: #f9fafb;
+            color: #111827;
+            border-color: #9ca3af;
         }
         .dark .coa-btn-secondary {
-            color: #e5e7eb;
-            background-color: #1f2937;
-            border-color: #374151;
+            color: #d1d5db;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
         }
         .dark .coa-btn-secondary:hover {
-            background-color: #374151;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
         }
         .coa-table-wrapper {
             background-color: #ffffff;
@@ -84,8 +105,8 @@
             overflow: hidden;
         }
         .dark .coa-table-wrapper {
-            background-color: #111827;
-            border-color: #1f2937;
+            background-color: #18181b;
+            border-color: rgba(255, 255, 255, 0.1);
         }
         .coa-header {
             display: flex;
@@ -101,8 +122,8 @@
             letter-spacing: 0.05em;
         }
         .dark .coa-header {
-            background-color: #1f2937;
-            border-color: #374151;
+            background-color: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             color: #9ca3af;
         }
         .coa-node-row {
@@ -114,13 +135,28 @@
             transition: background-color 0.15s ease;
         }
         .dark .coa-node-row {
-            border-color: #1f2937;
+            border-color: rgba(255, 255, 255, 0.05);
         }
         .coa-node-row:hover {
             background-color: #f9fafb;
         }
         .dark .coa-node-row:hover {
-            background-color: #1f2937;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        .coa-code-badge {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4b5563;
+            background-color: #f3f4f6;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            border: 1px solid #e5e7eb;
+        }
+        .dark .coa-code-badge {
+            color: #d1d5db;
+            background-color: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
         }
         .coa-actions-bar {
             opacity: 0;
@@ -135,8 +171,9 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .dark .coa-actions-bar {
-            background: #111827;
-            border-color: #374151;
+            background: #18181b;
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
         }
         .coa-node-row:hover .coa-actions-bar {
             opacity: 1;
@@ -150,15 +187,27 @@
             padding: 0.125rem 0.375rem;
             border-radius: 0.25rem;
             text-decoration: none;
+            transition: all 0.15s ease;
         }
         .coa-action-edit { color: #4f46e5; }
         .coa-action-edit:hover { background-color: #eef2ff; }
+        .dark .coa-action-edit { color: #818cf8; }
+        .dark .coa-action-edit:hover { background-color: rgba(99, 102, 241, 0.15); }
+
         .coa-action-add { color: #059669; }
         .coa-action-add:hover { background-color: #ecfdf5; }
+        .dark .coa-action-add { color: #34d399; }
+        .dark .coa-action-add:hover { background-color: rgba(16, 185, 129, 0.15); }
+
         .coa-action-delete { color: #dc2626; }
         .coa-action-delete:hover { background-color: #fef2f2; }
+        .dark .coa-action-delete { color: #f87171; }
+        .dark .coa-action-delete:hover { background-color: rgba(239, 68, 68, 0.15); }
+
         .coa-action-view { color: #2563eb; }
         .coa-action-view:hover { background-color: #eff6ff; }
+        .dark .coa-action-view { color: #60a5fa; }
+        .dark .coa-action-view:hover { background-color: rgba(37, 99, 235, 0.15); }
 
         .coa-badge {
             display: inline-block;
@@ -168,10 +217,17 @@
             border-radius: 9999px;
             margin-left: 0.5rem;
         }
-        .coa-badge-penerimaan { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .coa-badge-pengeluaran { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .coa-badge-kas { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-        .coa-badge-hutang { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .coa-badge-penerimaan { background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .dark .coa-badge-penerimaan { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(52, 211, 153, 0.3); }
+
+        .coa-badge-pengeluaran { background-color: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+        .dark .coa-badge-pengeluaran { background-color: rgba(244, 63, 94, 0.15); color: #fb7185; border-color: rgba(251, 113, 133, 0.3); }
+
+        .coa-badge-kas { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .dark .coa-badge-kas { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }
+
+        .coa-badge-hutang { background-color: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .dark .coa-badge-hutang { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
 
         .coa-tree-wrapper svg {
             width: 1.125rem !important;
@@ -260,10 +316,10 @@
             @php $treeNodes = $this->tree_nodes; @endphp
 
             @if($treeNodes->isEmpty())
-                <div style="padding: 2rem; text-align: center; color: #6b7280;">
-                    <x-heroicon-o-folder-open class="w-12 h-12" style="margin: 0 auto 0.75rem auto; color: #9ca3af;" />
-                    <p style="font-size: 1rem; font-weight: 500;">Tidak ada data Chart of Accounts ditemukan.</p>
-                    <p style="font-size: 0.75rem; margin-top: 0.25rem; color: #9ca3af;">Coba ubah kata kunci pencarian atau tambah akun baru.</p>
+                <div class="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <x-heroicon-o-folder-open class="w-12 h-12 mx-auto mb-3 text-gray-400 dark:text-gray-600" />
+                    <p class="text-base font-medium text-gray-700 dark:text-gray-300">Tidak ada data Chart of Accounts ditemukan.</p>
+                    <p class="text-xs mt-1 text-gray-400 dark:text-gray-500">Coba ubah kata kunci pencarian atau tambah akun baru.</p>
                 </div>
             @else
                 <div>

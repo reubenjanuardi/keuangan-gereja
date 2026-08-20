@@ -8,7 +8,7 @@
     $formattedBudget = 'Rp ' . number_format($budget, 0, ',', '.');
 @endphp
 
-<div class="coa-node-wrapper border-b border-gray-100 dark:border-gray-800/60">
+<div class="coa-node-wrapper border-b border-gray-100 dark:border-white/5">
     <div class="coa-node-row group" style="padding-left: {{ ($depth * 1.75) + 0.75 }}rem">
         <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0; flex: 1;">
             {{-- Toggle Button or Spacer --}}
@@ -16,7 +16,7 @@
                 <button
                     type="button"
                     wire:click="toggleNode('{{ $node->kode_akun }}')"
-                    style="padding: 0.25rem; border-radius: 0.25rem; border: none; background: transparent; cursor: pointer; color: #6b7280;"
+                    class="p-1 rounded text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 bg-transparent border-0 cursor-pointer inline-flex items-center justify-center"
                     title="{{ $isExpanded ? 'Sembunyikan' : 'Tampilkan' }}"
                 >
                     @if($isExpanded)
@@ -38,16 +38,16 @@
                         <x-heroicon-m-folder class="w-5 h-5 text-amber-500" style="color: #f59e0b;" />
                     @endif
                 @else
-                    <x-heroicon-m-stop class="w-3.5 h-3.5 text-gray-400" style="color: #9ca3af;" />
+                    <x-heroicon-m-stop class="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                 @endif
             </span>
 
             {{-- Account Information --}}
             <div style="display: flex; align-items: center; gap: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                <span style="font-family: monospace; font-size: 0.75rem; font-weight: 600; color: #4b5563; background-color: #f3f4f6; padding: 0.125rem 0.375rem; border-radius: 0.25rem; border: 1px solid #e5e7eb;">
+                <span class="coa-code-badge">
                     {{ $node->kode_akun }}
                 </span>
-                <span style="font-size: 0.875rem; font-weight: {{ $isGroup ? '600' : '500' }}; color: #111827;" class="dark:text-gray-100">
+                <span class="text-sm {{ $isGroup ? 'font-semibold' : 'font-medium' }} text-gray-900 dark:text-gray-100">
                     {{ $node->nama_akun }}
                 </span>
 
@@ -62,7 +62,7 @@
                 </span>
 
                 @if(!$node->is_postable)
-                    <span style="font-size: 0.625rem; text-transform: uppercase; font-weight: 700; color: #9ca3af; letter-spacing: 0.05em;">
+                    <span class="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">
                         (Group)
                     </span>
                 @endif
@@ -81,7 +81,7 @@
                     Edit
                 </button>
 
-                <span style="color: #d1d5db;">|</span>
+                <span class="text-gray-300 dark:text-gray-600 select-none">|</span>
 
                 <button
                     type="button"
@@ -91,7 +91,7 @@
                     Add Child
                 </button>
 
-                <span style="color: #d1d5db;">|</span>
+                <span class="text-gray-300 dark:text-gray-600 select-none">|</span>
 
                 <button
                     type="button"
@@ -102,7 +102,7 @@
                 </button>
 
                 @if($node->is_postable)
-                    <span style="color: #d1d5db;">|</span>
+                    <span class="text-gray-300 dark:text-gray-600 select-none">|</span>
 
                     <a
                         href="{{ route('filament.admin.resources.vouchers.index') }}"
@@ -114,7 +114,7 @@
             </div>
 
             {{-- Budget (Anggaran PKA) --}}
-            <div style="text-align: right; min-width: 130px; font-family: monospace; font-size: 0.875rem; font-weight: {{ $budget > 0 ? '600' : '400' }}; color: {{ $budget > 0 ? '#111827' : '#9ca3af' }};">
+            <div class="text-right min-w-[130px] font-mono text-sm {{ $budget > 0 ? 'font-semibold text-gray-900 dark:text-gray-200' : 'font-normal text-gray-400 dark:text-gray-500' }}">
                 {{ $formattedBudget }}
             </div>
         </div>
@@ -122,7 +122,7 @@
 
     {{-- Recursive Children Render --}}
     @if($hasChildren && $isExpanded)
-        <div style="border-left: 1px dashed #e5e7eb;">
+        <div class="border-l border-dashed border-gray-200 dark:border-white/10">
             @foreach($node->children as $child)
                 @include('filament.resources.chart-of-account-resource.pages.tree-node', ['node' => $child, 'depth' => $depth + 1])
             @endforeach
