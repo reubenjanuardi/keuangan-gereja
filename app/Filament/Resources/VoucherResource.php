@@ -12,6 +12,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -119,12 +120,6 @@ class VoucherResource extends Resource
                 ->relationship()
                 ->minItems(1)
                 ->addActionLabel('Tambah Item')
-                ->afterStateHydrated(function ($state, Set $set): void {
-                    $set('total_nominal', static::calculateTotalNominal($state ?? []));
-                })
-                ->afterStateUpdated(function ($state, Set $set): void {
-                    $set('total_nominal', static::calculateTotalNominal($state ?? []));
-                })
                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data, Repeater $component): array {
                     $kodeAkun = $component->getRecord()?->kode_akun
                         ?? data_get($component->getLivewire(), 'data.kode_akun');
@@ -151,22 +146,17 @@ class VoucherResource extends Resource
                         ->numeric()
                         ->inputMode('decimal')
                         ->prefix('Rp')
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(function (Get $get, Set $set): void {
-                            $transactions = $get('../../transactions') ?? [];
-                            $set('../../total_nominal', static::calculateTotalNominal($transactions));
-                        }),
+                        ->live(onBlur: true),
                 ])
                 ->columns(3),
 
-            TextInput::make('total_nominal')
+            Placeholder::make('total_nominal')
                 ->label('Total Nominal')
-                ->required()
-                ->numeric()
-                ->prefix('Rp')
-                ->readOnly()
-                ->default(0)
-                ->dehydrated(),
+                ->content(function (Get $get): string {
+                    $transactions = $get('transactions') ?? [];
+                    $total = static::calculateTotalNominal($transactions);
+                    return 'Rp ' . number_format($total, 0, ',', '.');
+                }),
         ]);
     }
 
