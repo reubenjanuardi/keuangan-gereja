@@ -119,27 +119,21 @@ class VoucherResource extends Resource
                 ->relationship()
                 ->minItems(1)
                 ->addActionLabel('Tambah Item')
-                ->afterStateHydrated(function (Get $get, Set $set): void {
-                    static::updateTotalNominal($get, $set);
+                ->afterStateHydrated(function ($state, Set $set): void {
+                    $set('total_nominal', static::calculateTotalNominal($state ?? []));
                 })
-                ->afterStateUpdated(function (Get $get, Set $set): void {
-                    static::updateTotalNominal($get, $set);
+                ->afterStateUpdated(function ($state, Set $set): void {
+                    $set('total_nominal', static::calculateTotalNominal($state ?? []));
                 })
                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data, Repeater $component): array {
-                    $record = $component->getModelInstance();
-                    $livewire = $component->getLivewire();
-                    $kodeAkun = $record?->kode_akun
-                        ?? data_get($livewire, 'data.kode_akun')
-                        ?? data_get($component->getContainer()->getRawState(), 'kode_akun');
+                    $kodeAkun = $component->getRecord()?->kode_akun
+                        ?? data_get($component->getLivewire(), 'data.kode_akun');
                     $data['kode_akun'] = $kodeAkun;
                     return $data;
                 })
                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data, Repeater $component): array {
-                    $record = $component->getModelInstance();
-                    $livewire = $component->getLivewire();
-                    $kodeAkun = $record?->kode_akun
-                        ?? data_get($livewire, 'data.kode_akun')
-                        ?? data_get($component->getContainer()->getRawState(), 'kode_akun');
+                    $kodeAkun = $component->getRecord()?->kode_akun
+                        ?? data_get($component->getLivewire(), 'data.kode_akun');
                     if ($kodeAkun) {
                         $data['kode_akun'] = $kodeAkun;
                     }
@@ -159,7 +153,8 @@ class VoucherResource extends Resource
                         ->prefix('Rp')
                         ->live(onBlur: true)
                         ->afterStateUpdated(function (Get $get, Set $set): void {
-                            static::updateTotalNominal($get, $set);
+                            $transactions = $get('../../transactions') ?? [];
+                            $set('../../total_nominal', static::calculateTotalNominal($transactions));
                         }),
                 ])
                 ->columns(3),
@@ -245,14 +240,6 @@ class VoucherResource extends Resource
             'create' => Pages\CreateVoucher::route('/create'),
             'edit' => Pages\EditVoucher::route('/{record}/edit'),
         ];
-    }
-
-    public static function updateTotalNominal(Get $get, Set $set): void
-    {
-        $transactions = $get('transactions') ?? $get('/transactions') ?? [];
-        $total = static::calculateTotalNominal($transactions);
-        $set('total_nominal', $total);
-        $set('/total_nominal', $total);
     }
 
     public static function calculateTotalNominal(mixed $transactions): float
