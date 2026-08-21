@@ -11,7 +11,7 @@ beforeEach(function () {
 
 test('chart of accounts tree page can be rendered', function () {
     $this->actingAs($this->user)
-        ->get('/admin/chart-of-accounts')
+        ->get('/keuangan/chart-of-accounts')
         ->assertStatus(200);
 });
 

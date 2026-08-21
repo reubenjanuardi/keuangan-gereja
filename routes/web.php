@@ -8,22 +8,33 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return view('welcome');
 });
 
-// Redirect /dashboard ke Filament admin panel.
-// Route ini dipertahankan agar link lama tidak broken.
+// Dashboard App Launcher
 Route::get('/dashboard', function () {
-    return redirect('/admin');
+    return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Redirect /admin/login ke Breeze login page (/login) agar hanya ada satu pintu login.
+// Redirect /keuangan/dashboard ke /keuangan (home Filament panel)
+Route::get('/keuangan/dashboard', function () {
+    return redirect('/keuangan');
+})->middleware(['auth', 'verified']);
+
+// Redirect /admin & /admin/{any} ke /keuangan/{any} untuk kompatibilitas
+Route::get('/admin', function () {
+    return redirect('/keuangan');
+});
+Route::get('/admin/{any}', function ($any) {
+    return redirect("/keuangan/{$any}");
+})->where('any', '.*');
+
+// Redirect login panel ke Breeze login page (/login)
 Route::get('/admin/login', function () {
+    return redirect()->route('login');
+})->middleware('guest');
+
+Route::get('/keuangan/login', function () {
     return redirect()->route('login');
 })->middleware('guest');
 

@@ -6,8 +6,8 @@ use App\Models\Voucher;
 use App\Models\Transaction;
 
 test('guest cannot access report pages or pdfs', function () {
-    $this->get('/admin/laporan-buku-besar')->assertRedirect();
-    $this->get('/admin/laporan-jurnal')->assertRedirect();
+    $this->get('/keuangan/laporan-buku-besar')->assertRedirect();
+    $this->get('/keuangan/laporan-jurnal')->assertRedirect();
     $this->get(route('laporan.buku-besar.pdf'))->assertRedirect(route('login'));
     $this->get(route('laporan.jurnal.pdf'))->assertRedirect(route('login'));
 });
@@ -15,7 +15,7 @@ test('guest cannot access report pages or pdfs', function () {
 test('authenticated user can view laporan buku besar page', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/admin/laporan-buku-besar');
+    $response = $this->actingAs($user)->get('/keuangan/laporan-buku-besar');
 
     $response->assertStatus(200);
 });
@@ -23,7 +23,7 @@ test('authenticated user can view laporan buku besar page', function () {
 test('authenticated user can view laporan jurnal page', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/admin/laporan-jurnal');
+    $response = $this->actingAs($user)->get('/keuangan/laporan-jurnal');
 
     $response->assertStatus(200);
 });

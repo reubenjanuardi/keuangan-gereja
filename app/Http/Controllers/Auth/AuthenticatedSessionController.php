@@ -28,18 +28,14 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
-     *
-     * Setelah login berhasil, redirect ke Filament admin dashboard.
-     * Jika user sudah punya intended URL (misal langsung akses /admin/vouchers),
-     * maka akan diarahkan ke URL tersebut terlebih dahulu.
      */
-    public function store(LoginRequest $request): SymfonyResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return Inertia::location(redirect()->intended('/admin'));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

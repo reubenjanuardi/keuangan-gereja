@@ -26,8 +26,8 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('admin')
-            ->path('admin')
+            ->id('keuangan')
+            ->path('keuangan')
             // Nonaktifkan login page Filament bawaan.
             // Autentikasi ditangani oleh Laravel Breeze di route /login.
             // Filament akan meredirect ke /login jika belum terautentikasi.
