@@ -105,7 +105,7 @@
                     <span class="text-gray-300 dark:text-gray-600 select-none">|</span>
 
                     <a
-                        href="{{ route('filament.admin.resources.vouchers.index') }}"
+                        href="{{ \App\Filament\Resources\VoucherResource::getUrl('index') }}"
                         class="coa-action-link coa-action-view"
                     >
                         View Ledger
