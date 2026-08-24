@@ -4,19 +4,22 @@
 FROM composer:2 AS vendor-builder
 WORKDIR /app
 
-ARG GITHUB_TOKEN
 ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV COMPOSER_PROCESS_TIMEOUT=600
+ENV COMPOSER_PROCESS_TIMEOUT=1800
+ENV COMPOSER_MAX_PARALLEL_HTTP=2
+
+# Install git & unzip and configure composer for reliable downloads
+RUN apk add --no-cache git unzip openssh \
+    && composer config -g process-timeout 1800 \
+    && composer config -g github-protocols https
 
 COPY composer.json composer.lock ./
-RUN if [ -n "$GITHUB_TOKEN" ]; then composer config -g github-oauth.github.com "$GITHUB_TOKEN"; fi \
-    && composer install \
-        --no-dev \
-        --no-interaction \
-        --prefer-dist \
-        --optimize-autoloader \
-        --no-scripts \
-        --ignore-platform-reqs
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --optimize-autoloader \
+    --no-scripts \
+    --ignore-platform-reqs
 
 # ==========================================
 # STAGE 2: Build Frontend Assets (Vite + Vue 3)
