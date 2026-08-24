@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Settings\Pages;
 
+use App\Models\ActivityLog;
 use App\Models\AppSetting;
 use BackedEnum;
 use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -20,15 +22,15 @@ class PengaturanGereja extends Page implements HasForms
 
     protected string $view = 'filament.pages.pengaturan-gereja';
 
-    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-building-library';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Pengaturan';
+    protected static UnitEnum|string|null $navigationGroup = 'Konfigurasi Portal';
 
-    protected static ?string $navigationLabel = 'Profil Gereja';
+    protected static ?string $navigationLabel = 'Profil & Identitas Gereja';
 
-    protected static ?string $title = 'Pengaturan Profil Gereja';
+    protected static ?string $title = 'Pengaturan Profil & Identitas Gereja';
 
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 10;
 
     public static function canAccess(): bool
     {
@@ -60,11 +62,11 @@ class PengaturanGereja extends Page implements HasForms
     {
         return $schema
             ->schema([
-                Section::make('Identitas Gereja')
+                Section::make('Identitas & Profil Lembaga')
                     ->description('Data ini digunakan untuk identitas sistem, header cetakan Bukti Voucher (PDF), dan logo pada Navbar.')
                     ->icon('heroicon-o-building-library')
                     ->schema([
-                        \Filament\Forms\Components\FileUpload::make('church_logo')
+                        FileUpload::make('church_logo')
                             ->label('Logo Gereja')
                             ->image()
                             ->disk('public')
@@ -72,10 +74,10 @@ class PengaturanGereja extends Page implements HasForms
                             ->visibility('public')
                             ->imagePreviewHeight('120')
                             ->maxSize(2048)
-                            ->helperText('Unggah logo gereja (format PNG, JPG, JPEG, SVG, WebP, maks 2MB). Jika logo diunggah, logo akan muncul pada Navbar menggantikan teks "Keuangan Gereja". Jika belum ada logo, teks "Keuangan Gereja" akan tetap dipertahankan.'),
+                            ->helperText('Unggah logo gereja (format PNG, JPG, JPEG, SVG, WebP, maks 2MB). Jika logo diunggah, logo akan muncul pada Navbar menggantikan teks "Keuangan Gereja". Jika belum ada logo, teks default akan digunakan.'),
 
                         TextInput::make('church_name')
-                            ->label('Nama Gereja')
+                            ->label('Nama Gereja / Lembaga')
                             ->required()
                             ->maxLength(200)
                             ->placeholder('Contoh: GPIB Jemaat Hosiana'),
@@ -100,7 +102,7 @@ class PengaturanGereja extends Page implements HasForms
     {
         return [
             Action::make('save')
-                ->label('Simpan Pengaturan')
+                ->label('Simpan Perubahan')
                 ->icon('heroicon-o-check-circle')
                 ->color('success')
                 ->action('save'),
@@ -116,13 +118,36 @@ class PengaturanGereja extends Page implements HasForms
             $logo = array_values($logo)[0] ?? '';
         }
 
-        AppSetting::set('church_name',     $data['church_name'] ?? '');
-        AppSetting::set('church_address1', $data['church_address1'] ?? '');
-        AppSetting::set('church_address2', $data['church_address2'] ?? '');
-        AppSetting::set('church_logo',     (string) $logo);
+        $oldSettings = [
+            'church_name'     => AppSetting::get('church_name'),
+            'church_address1' => AppSetting::get('church_address1'),
+            'church_address2' => AppSetting::get('church_address2'),
+            'church_logo'     => AppSetting::get('church_logo'),
+        ];
+
+        $newSettings = [
+            'church_name'     => $data['church_name'] ?? '',
+            'church_address1' => $data['church_address1'] ?? '',
+            'church_address2' => $data['church_address2'] ?? '',
+            'church_logo'     => (string) $logo,
+        ];
+
+        AppSetting::set('church_name',     $newSettings['church_name']);
+        AppSetting::set('church_address1', $newSettings['church_address1']);
+        AppSetting::set('church_address2', $newSettings['church_address2']);
+        AppSetting::set('church_logo',     $newSettings['church_logo']);
+
+        ActivityLog::log(
+            description: 'Memperbarui Konfigurasi Profil & Identitas Gereja',
+            logName: 'portal_settings',
+            properties: [
+                'old' => $oldSettings,
+                'attributes' => $newSettings,
+            ]
+        );
 
         Notification::make()
-            ->title('Pengaturan berhasil disimpan.')
+            ->title('Pengaturan profil gereja berhasil disimpan.')
             ->success()
             ->send();
     }

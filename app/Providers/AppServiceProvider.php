@@ -42,6 +42,36 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Super Admin bypass all permissions
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            return $user->hasRole('Super Admin') ? true : null;
+        });
+
+        // Activity Logging for Authentication Events
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class, function ($event) {
+            if ($event->user instanceof \App\Models\User) {
+                $event->user->updateQuietly([
+                    'last_login_at' => now(),
+                    'last_login_ip' => request()->ip(),
+                ]);
+                \App\Models\ActivityLog::log(
+                    description: "Pengguna [{$event->user->name}] berhasil login ke sistem",
+                    logName: 'auth',
+                    subject: $event->user
+                );
+            }
+        });
+
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Logout::class, function ($event) {
+            if ($event->user instanceof \App\Models\User) {
+                \App\Models\ActivityLog::log(
+                    description: "Pengguna [{$event->user->name}] melakukan logout",
+                    logName: 'auth',
+                    subject: $event->user
+                );
+            }
+        });
+
         Vite::prefetch(concurrency: 3);
 
         if (! class_exists(\Dom\HTMLDocument::class)) {

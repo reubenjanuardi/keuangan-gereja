@@ -2,14 +2,27 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Voucher extends Model
 {
+    use LogsActivity;
+
     protected $primaryKey = 'no_bukti';
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = [];
+
+    public function getActivityLogName(): string
+    {
+        return 'keuangan';
+    }
+
+    public function getActivityLogTitle(): string
+    {
+        return "{$this->no_bukti} ({$this->jenis_voucher}) - {$this->pihak_terkait}";
+    }
 
     public function transactions()
     {

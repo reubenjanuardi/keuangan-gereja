@@ -13,7 +13,8 @@ test('guest cannot access report pages or pdfs', function () {
 });
 
 test('authenticated user can view laporan buku besar page', function () {
-    $user = User::factory()->create();
+    $this->seed(\Database\Seeders\RbacSeeder::class);
+    $user = User::where('email', 'bendahara@gpibhosiana.org')->first();
 
     $response = $this->actingAs($user)->get('/keuangan/laporan-buku-besar');
 
@@ -21,7 +22,8 @@ test('authenticated user can view laporan buku besar page', function () {
 });
 
 test('authenticated user can view laporan jurnal page', function () {
-    $user = User::factory()->create();
+    $this->seed(\Database\Seeders\RbacSeeder::class);
+    $user = User::where('email', 'bendahara@gpibhosiana.org')->first();
 
     $response = $this->actingAs($user)->get('/keuangan/laporan-jurnal');
 
@@ -29,7 +31,8 @@ test('authenticated user can view laporan jurnal page', function () {
 });
 
 test('authenticated user can stream pdf for buku besar and jurnal', function () {
-    $user = User::factory()->create();
+    $this->seed(\Database\Seeders\RbacSeeder::class);
+    $user = User::where('email', 'bendahara@gpibhosiana.org')->first();
 
     $coa = ChartOfAccount::create([
         'kode_akun' => '4.102',

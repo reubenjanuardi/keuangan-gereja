@@ -14,6 +14,14 @@ class VoucherPdfController extends Controller
      */
     public function stream(Voucher $voucher): Response
     {
+        abort_unless(auth()->user()?->can('keuangan.voucher.print'), 403, 'Anda tidak memiliki izin untuk mencetak bukti voucher.');
+
+        \App\Models\ActivityLog::log(
+            description: "Mencetak Bukti Voucher PDF [{$voucher->no_bukti}]",
+            logName: 'keuangan',
+            subject: $voucher
+        );
+
         $voucher->load('transactions.chartOfAccount', 'chartOfAccount');
 
         $settings = [

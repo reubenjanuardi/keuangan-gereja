@@ -14,6 +14,14 @@ class LaporanPdfController extends Controller
      */
     public function bukuBesar(Request $request): Response
     {
+        abort_unless(auth()->user()?->can('keuangan.laporan.export'), 403, 'Anda tidak memiliki izin untuk mengunduh laporan keuangan.');
+
+        \App\Models\ActivityLog::log(
+            description: 'Mengunduh Laporan Buku Besar PDF',
+            logName: 'keuangan',
+            properties: ['params' => $request->query()]
+        );
+
         $startDate = $request->query('startDate') ?: now()->startOfMonth()->toDateString();
         $endDate = $request->query('endDate') ?: now()->endOfMonth()->toDateString();
         $kodeAkun = $request->query('kodeAkun');
@@ -59,6 +67,14 @@ class LaporanPdfController extends Controller
      */
     public function jurnal(Request $request): Response
     {
+        abort_unless(auth()->user()?->can('keuangan.laporan.export'), 403, 'Anda tidak memiliki izin untuk mengunduh laporan keuangan.');
+
+        \App\Models\ActivityLog::log(
+            description: 'Mengunduh Laporan Jurnal Transaksi PDF',
+            logName: 'keuangan',
+            properties: ['params' => $request->query()]
+        );
+
         $startDate = $request->query('startDate') ?: now()->startOfMonth()->toDateString();
         $endDate = $request->query('endDate') ?: now()->endOfMonth()->toDateString();
         $kategori = $request->query('kategori');
@@ -107,6 +123,14 @@ class LaporanPdfController extends Controller
      */
     public function realisasiMingguan(Request $request): Response
     {
+        abort_unless(auth()->user()?->can('keuangan.laporan.export'), 403, 'Anda tidak memiliki izin untuk mengunduh laporan keuangan.');
+
+        \App\Models\ActivityLog::log(
+            description: 'Mengunduh Laporan Realisasi Mingguan PDF',
+            logName: 'keuangan',
+            properties: ['params' => $request->query()]
+        );
+
         $startDate = $request->query('startDate') ?: now()->startOfWeek()->toDateString();
         $endDate = $request->query('endDate') ?: now()->endOfWeek()->toDateString();
         $mingguKe = $request->query('mingguKe') ?: '';

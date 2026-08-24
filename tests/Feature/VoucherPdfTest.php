@@ -28,7 +28,8 @@ test('guest cannot access voucher pdf', function () {
 });
 
 test('authenticated user can stream voucher pdf', function () {
-    $user = User::factory()->create();
+    $this->seed(\Database\Seeders\RbacSeeder::class);
+    $user = User::where('email', 'bendahara@gpibhosiana.org')->first();
 
     $coa = ChartOfAccount::create([
         'kode_akun' => '4.101',

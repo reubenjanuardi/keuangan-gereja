@@ -42,7 +42,7 @@ class AppSetting extends Model
             return $logo;
         }
 
-        return Storage::disk('public')->url($logo);
+        return asset('storage/' . ltrim($logo, '/'));
     }
 }
 

@@ -3,11 +3,12 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const page = usePage();
-const user = computed(() => page.props.auth?.user || { name: 'Pengguna', email: '' });
+const user = computed(() => page.props.auth?.user || { name: 'Pengguna', email: '', roles: [], permissions: [], is_super_admin: false });
 
 const searchQuery = ref('');
 const selectedCategory = ref('Semua');
 const showModal = ref(false);
+const modalType = ref('coming_soon'); // 'coming_soon' | 'access_denied'
 const activeModalApp = ref(null);
 const userDropdownOpen = ref(false);
 
@@ -150,15 +151,23 @@ const apps = [
         subtitle: 'Hak Akses & Konfigurasi',
         category: 'Sistem',
         route: '/settings',
-        active: false,
-        badge: 'Segera Hadir',
-        description: 'Pengaturan profil institusi, hak akses modul, log aktivitas pengguna, dan konfigurasi master data.',
+        active: true,
+        badge: 'Aktif',
+        description: 'Pengaturan profil institusi gereja, manajemen pengguna, penetapan peran & matriks hak akses, serta peninjau log aktivitas audit.',
         icon: 'settings',
         color: 'from-slate-600 to-blue-700',
     },
 ];
 
-const categories = ['Semua', 'Keuangan', 'Administrasi', 'Pelayanan', 'Sarana & Aset'];
+const categories = ['Semua', 'Keuangan', 'Administrasi', 'Pelayanan', 'Sarana & Aset', 'Sistem'];
+
+function hasModuleAccess(app) {
+    if (!app.active) return false;
+    if (user.value.is_super_admin) return true;
+    const perms = user.value.permissions || [];
+    if (perms.includes('*')) return true;
+    return perms.includes(`module.${app.id}`);
+}
 
 const filteredApps = computed(() => {
     return apps.filter((app) => {
@@ -179,10 +188,15 @@ const filteredApps = computed(() => {
 });
 
 function handleAppClick(app) {
-    if (app.active) {
+    if (app.active && hasModuleAccess(app)) {
         window.location.href = app.route;
+    } else if (app.active && !hasModuleAccess(app)) {
+        activeModalApp.value = app;
+        modalType.value = 'access_denied';
+        showModal.value = true;
     } else {
         activeModalApp.value = app;
+        modalType.value = 'coming_soon';
         showModal.value = true;
     }
 }
@@ -257,9 +271,14 @@ function handleLogout() {
                                 <div class="h-8 w-8 rounded-full bg-blue-900 text-white font-bold flex items-center justify-center text-xs shadow-sm">
                                     {{ user.name ? user.name.charAt(0).toUpperCase() : 'U' }}
                                 </div>
-                                <span class="hidden lg:block text-sm font-medium text-slate-700 max-w-[120px] truncate text-left">
-                                    {{ user.name }}
-                                </span>
+                                <div class="hidden lg:flex flex-col text-left">
+                                    <span class="text-sm font-medium text-slate-800 max-w-[140px] truncate leading-tight">
+                                        {{ user.name }}
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 font-normal">
+                                        {{ user.roles && user.roles.length ? user.roles[0] : (user.is_super_admin ? 'Super Admin' : 'Pengguna') }}
+                                    </span>
+                                </div>
                                 <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -274,6 +293,15 @@ function handleLogout() {
                                 <div class="px-4 py-2 border-b border-slate-100">
                                     <p class="font-semibold text-slate-900 truncate">{{ user.name }}</p>
                                     <p class="text-xs text-slate-500 truncate">{{ user.email }}</p>
+                                    <div class="mt-1 flex flex-wrap gap-1">
+                                        <span
+                                            v-for="r in (user.roles || [])"
+                                            :key="r"
+                                            class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded bg-blue-50 text-blue-800 border border-blue-100"
+                                        >
+                                            {{ r }}
+                                        </span>
+                                    </div>
                                 </div>
                                 <Link
                                     :href="route('profile.edit')"
@@ -284,6 +312,17 @@ function handleLogout() {
                                     </svg>
                                     Profil Akun
                                 </Link>
+                                <a
+                                    v-if="user.is_super_admin || (user.permissions && user.permissions.includes('module.settings'))"
+                                    href="/settings"
+                                    class="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                                >
+                                    <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Pengaturan Portal
+                                </a>
                                 <button
                                     @click="handleLogout"
                                     class="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors text-left"
@@ -309,7 +348,7 @@ function handleLogout() {
                         Aplikasi &amp; Layanan Portal
                     </h1>
                     <p class="mt-1 text-sm sm:text-base text-slate-600">
-                        Pilih salah satu aplikasi di bawah untuk membuka modul pengelolaan GPIB Jemaat Hosiana.
+                        Pilih modul di bawah untuk membuka sistem pengelolaan GPIB Jemaat Hosiana sesuai hak akses Anda.
                     </p>
                 </div>
 
@@ -361,19 +400,35 @@ function handleLogout() {
                 >
                     <!-- App Card Box -->
                     <div
-                        class="relative w-full aspect-square bg-white rounded-3xl p-4 sm:p-5 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-slate-100 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1.5 group-hover:border-slate-300"
-                        :class="{
-                            'ring-2 ring-blue-900/20 shadow-blue-900/5': app.active,
-                        }"
+                        class="relative w-full aspect-square bg-white rounded-3xl p-4 sm:p-5 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.05)] border transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1.5"
+                        :class="[
+                            app.active && hasModuleAccess(app)
+                                ? 'border-slate-100 ring-2 ring-blue-900/10 shadow-blue-900/5 group-hover:border-blue-300'
+                                : app.active && !hasModuleAccess(app)
+                                ? 'border-amber-200/80 bg-slate-50/70 group-hover:border-amber-300 opacity-90'
+                                : 'border-slate-100 opacity-80 group-hover:border-slate-300'
+                        ]"
                     >
-                        <!-- Lock / Coming Soon subtle icon -->
+                        <!-- Lock badge for active module WITHOUT user permission -->
                         <span
-                            v-if="!app.active"
+                            v-if="app.active && !hasModuleAccess(app)"
+                            class="absolute top-2.5 right-2.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold shadow-2xs"
+                            title="Akses Terkunci (Hubungi Admin)"
+                        >
+                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Terkunci
+                        </span>
+
+                        <!-- Coming Soon icon for unreleased modules -->
+                        <span
+                            v-else-if="!app.active"
                             class="absolute top-2.5 right-2.5 h-4 w-4 text-slate-300 group-hover:text-slate-400 transition-colors"
                             title="Segera Hadir"
                         >
                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </span>
 
@@ -501,7 +556,7 @@ function handleLogout() {
             </div>
         </footer>
 
-        <!-- Modal: Coming Soon Module Notification -->
+        <!-- Modal: Coming Soon or Access Denied Notification -->
         <div
             v-if="showModal"
             class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4"
@@ -517,46 +572,82 @@ function handleLogout() {
                     </svg>
                 </button>
 
-                <div class="mx-auto mb-4 h-16 w-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-sm">
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
+                <!-- Case 1: ACCESS DENIED MODAL -->
+                <div v-if="modalType === 'access_denied'">
+                    <div class="mx-auto mb-4 h-16 w-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-sm">
+                        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+
+                    <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 mb-2">
+                        Akses Terkunci
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-900 tracking-tight">
+                        Modul {{ activeModalApp?.name }}
+                    </h3>
+
+                    <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+                        Akun Anda (<strong>{{ user.name }}</strong>) belum diberikan izin untuk mengakses modul ini.
+                    </p>
+
+                    <div class="mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 text-left flex items-start gap-2.5">
+                        <svg class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>
+                            Sistem menerapkan <strong>Role-Based Access Control (RBAC)</strong>. Silakan hubungi <strong>Super Administrator</strong> jika Anda memerlukan akses ke modul ini.
+                        </span>
+                    </div>
+
+                    <div class="mt-6">
+                        <button
+                            @click="closeModal"
+                            class="w-full px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+                        >
+                            Saya Mengerti
+                        </button>
+                    </div>
                 </div>
 
-                <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 mb-2">
-                    Tahap Pengembangan
-                </div>
+                <!-- Case 2: COMING SOON MODAL -->
+                <div v-else>
+                    <div class="mx-auto mb-4 h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-900 shadow-sm">
+                        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
 
-                <h3 class="text-xl font-bold text-slate-900 tracking-tight">
-                    Modul {{ activeModalApp?.name }}
-                </h3>
+                    <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 mb-2">
+                        Tahap Pengembangan
+                    </div>
 
-                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
-                    {{ activeModalApp?.description }}
-                </p>
+                    <h3 class="text-xl font-bold text-slate-900 tracking-tight">
+                        Modul {{ activeModalApp?.name }}
+                    </h3>
 
-                <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 text-left flex items-start gap-2.5">
-                    <svg class="h-4 w-4 text-blue-900 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>
-                        Saat ini sistem yang sudah aktif beroperasi adalah <strong>Modul Keuangan</strong>. Modul lainnya akan diaktifkan secara bertahap.
-                    </span>
-                </div>
+                    <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+                        {{ activeModalApp?.description }}
+                    </p>
 
-                <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                    <a
-                        href="/keuangan"
-                        class="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
-                    >
-                        Buka Modul Keuangan
-                    </a>
-                    <button
-                        @click="closeModal"
-                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors"
-                    >
-                        Tutup
-                    </button>
+                    <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 text-left flex items-start gap-2.5">
+                        <svg class="h-4 w-4 text-blue-900 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>
+                            Modul ini sedang dalam proses pengembangan terpadu dan akan diaktifkan secara bertahap.
+                        </span>
+                    </div>
+
+                    <div class="mt-6">
+                        <button
+                            @click="closeModal"
+                            class="w-full px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors"
+                        >
+                            Tutup
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,26 @@
 Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
+1,KAS & BANK,Kas & Bank,
+11,Kas & Bank,Kas & Bank,
+111,Kas,Kas & Bank,
+111.01,Kas Besar,Kas & Bank,
+111.02,Kas Kecil,Kas & Bank,
+112,Bank (Anggaran Rutin),Kas & Bank,
+112.01,Bank xxx - Rekening Giro,Kas & Bank,
+112.02,Bank BRI - Rekening Tabungan Operasional,Kas & Bank,
+112.03,Bank BRI - Rekening Tabungan PEG (Pengembangan Ekonomi Gereja),Kas & Bank,
+112.04,Bank DKI - Rekening Tabungan BOTI (Bantuan Operasional Tempat Ibadah),Kas & Bank,
+113,Bank (Anggaran Non Rutin),Kas & Bank,
+113.01,Bank xxx - Rekening Giro,Kas & Bank,
+113.02,Bank xxx - Rekening Tabungan,Kas & Bank,
+114,Bank (Anggaran Proyek),Kas & Bank,
+114.01,Bank xxx -Rekening Giro,Kas & Bank,
+114.02,Bank xxx- Rekening Tabungan,Kas & Bank,
+115,Investasi,Kas & Bank,
+115.01,Deposito Bank BRI,Kas & Bank,
+115.02,Deposito Bank 02,Kas & Bank,
+115.03,Obligasi,Kas & Bank,
+12,Panjar/Uang Muka,Kas & Bank,
+13,Uang yang Harus diteruskan,Kas & Bank,
 21,KOLEKTE / PERSEMBAHAN,PENERIMAAN,FALSE
 21.01,Kolekte Ibadah Umum,PENERIMAAN,FALSE
 21.01.01,Ibadah Hari Minggu Pagi,PENERIMAAN,TRUE
@@ -41,7 +63,7 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 21.09.05,Ibadah Hari Natal 2,PENERIMAAN,TRUE
 21.09.06,Ibadah Malam Akhir Tahun,PENERIMAAN,TRUE
 21.09.07,Ibadah Tahun Baru,PENERIMAAN,TRUE
-21.10,Persembahan Khusus,PENERIMAAN,FALSE
+21.1,Persembahan Khusus,PENERIMAAN,FALSE
 21.10.01,a. Perorangan,PENERIMAAN,TRUE
 21.10.02,b. Perjamuan Kudus,PENERIMAAN,TRUE
 21.10.03,c. Malam Natal,PENERIMAAN,TRUE
@@ -98,15 +120,15 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 22.01.40,Ibadah HUT Pelkat PKLU ke 16,PENERIMAAN,TRUE
 22.01.41,Ibadah HUT Pelkat PKLU Hosiana ke 31 (18 Des 1995),PENERIMAAN,TRUE
 22.02,PELKES & LINGKUNGAN HIDUP,PENERIMAAN,FALSE
-21.02.01,Diakonia bulanan,PENERIMAAN,TRUE
-21.02.02,Diakonia Natal,PENERIMAAN,TRUE
-21.02.03,Diakonia Paskah,PENERIMAAN,TRUE
-21.02.04,Iuran STIKES Griya Husada - Surabaya,PENERIMAAN,TRUE
-21.02.05,Diakonia Jemaat yang sakit,PENERIMAAN,TRUE
-21.02.06,BUT (Bantuan Uang Transport) kunjungan jemaat di RS.,PENERIMAAN,TRUE
-21.02.07,Diakonia Dukacita,PENERIMAAN,TRUE
-21.02.08,Karangan Bunga Dukacita,PENERIMAAN,TRUE
-21.02.09,Pengadaan kendaraan Pendeta di Pos Pelkes,PENERIMAAN,TRUE
+22.02.01,Diakonia bulanan,PENERIMAAN,TRUE
+22.02.02,Diakonia Natal,PENERIMAAN,TRUE
+22.02.03,Diakonia Paskah,PENERIMAAN,TRUE
+22.02.04,Iuran STIKES Griya Husada - Surabaya,PENERIMAAN,TRUE
+22.02.05,Diakonia Jemaat yang sakit,PENERIMAAN,TRUE
+22.02.06,BUT (Bantuan Uang Transport) kunjungan jemaat di RS.,PENERIMAAN,TRUE
+22.02.07,Diakonia Dukacita,PENERIMAAN,TRUE
+22.02.08,Karangan Bunga Dukacita,PENERIMAAN,TRUE
+22.02.09,Pengadaan kendaraan Pendeta di Pos Pelkes,PENERIMAAN,TRUE
 22.03,GERMASA,PENERIMAAN,TRUE
 22.03.01,Berbagi Kasih Natal,PENERIMAAN,TRUE
 22.03.02,Pembagian Takjil,PENERIMAAN,TRUE
@@ -362,13 +384,13 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 311.08.08,8. HUT RI,PENGELUARAN,FALSE
 311.08.08.01,Transport pelayan,PENGELUARAN,TRUE
 311.08.08.02,Konsumsi,PENGELUARAN,TRUE
-30.00,PENGELUARAN KANTONG KHUSUS,PENGELUARAN,FALSE
-33.00.01,Ibadah Bulan PELKES,PENGELUARAN,TRUE
-33.00.02,Ibadah Hari Doa se-GPIB,PENGELUARAN,TRUE
-33.00.03,Ibadah HUT Oikumene,PENGELUARAN,TRUE
-33.00.04,Ibadah HUT Yapendik,PENGELUARAN,TRUE
-33.00.05,Hari Doa se-Dunia Anak (HDSA),PENGELUARAN,TRUE
-33.00.06,Lain-lain,PENGELUARAN,TRUE
+33,PENGELUARAN KANTONG KHUSUS,PENGELUARAN,FALSE
+33.01,Ibadah Bulan PELKES,PENGELUARAN,TRUE
+33.02,Ibadah Hari Doa se-GPIB,PENGELUARAN,TRUE
+33.03,Ibadah HUT Oikumene,PENGELUARAN,TRUE
+33.04,Ibadah HUT Yapendik,PENGELUARAN,TRUE
+33.05,Hari Doa se-Dunia Anak (HDSA),PENGELUARAN,TRUE
+33.06,Lain-lain,PENGELUARAN,TRUE
 366,PENGELUARAN UNTUK PIHAK LAIN,PENGELUARAN,FALSE
 366.01,Bantuan / sumbangan pembangunan untuk jemaat GPIB atau yang lainnya,PENGELUARAN,TRUE
 41,PROGRAM SINODAL,PENGELUARAN,FALSE
@@ -435,7 +457,7 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 50.00.48,Ibadah Gabungan Pelkat PKLU GPIB Mupel Jakarta Pusat,PENGELUARAN,TRUE
 50.00.49,Ibadah HUT Pelkat PKLU ke 16,PENGELUARAN,TRUE
 50.00.50,Ibadah HUT Pelkat PKLU Hosiana ke 31 (18 Des 1995),PENGELUARAN,TRUE
-51.00,PELKES,PENGELUARAN,FALSE
+51,PELKES,PENGELUARAN,FALSE
 51.00.01,Diakonia Natal,PENGELUARAN,TRUE
 51.00.02,Diakonia bulanan,PENGELUARAN,TRUE
 51.00.03,Diakonia Paskah,PENGELUARAN,TRUE
@@ -444,7 +466,7 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 51.00.06,diakonia kedukaan,PENGELUARAN,TRUE
 51.00.07,Karangan Bunga Dukacita,PENGELUARAN,TRUE
 51.00.08,Pengadaan kendaraan Pendeta di Pos Pelkes,PENGELUARAN,TRUE
-52.00,GERMASA,PENGELUARAN,FALSE
+52,GERMASA,PENGELUARAN,FALSE
 52.00.01,Berbagi Kasih Natal,PENGELUARAN,TRUE
 52.00.02,Pembagian Takjil,PENGELUARAN,TRUE
 52.00.03,Iuran YAPENDIK GPIB,PENGELUARAN,TRUE
@@ -452,7 +474,7 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 52.00.05,Spanduk Hari Raya Gerejawi dan Hari Raya Agama lain.,PENGELUARAN,TRUE
 52.00.06,Karangan bunga Ucapan Selamat.,PENGELUARAN,TRUE
 52.00.07,Kebersihan Lingkungan,PENGELUARAN,TRUE
-53.00,PPSDI & PPK,PENGELUARAN,FALSE
+53,PPSDI & PPK,PENGELUARAN,FALSE
 53.00.01,Persiapan Presbiter,PENGELUARAN,TRUE
 53.00.02,Penyediaan Alat Peraga,PENGELUARAN,TRUE
 53.00.03,Persiapan Pelayan PA,PENGELUARAN,TRUE
@@ -469,11 +491,11 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 53.00.14,Katekisasi Dewasa / perkawinan,PENGELUARAN,TRUE
 53.00.15,Sosialisasi PKA dan Pemilihan KP3 (MJP),PENGELUARAN,TRUE
 53.00.16,Retreat Katekisasi,PENGELUARAN,TRUE
-54.00,INFORKOM & LITBANG,PENGELUARAN,FALSE
+54,INFORKOM & LITBANG,PENGELUARAN,FALSE
 54.00.01,Persiapan Multimedia & Sound System,PENGELUARAN,TRUE
 54.00.02,Social Media Content Creator,PENGELUARAN,TRUE
 54.00.03,Langganan Zoom Meeting Pro,PENGELUARAN,TRUE
-55.00,PENGEMBANGAN EKONOMI GEREJA,PENGELUARAN,FALSE
+55,PENGEMBANGAN EKONOMI GEREJA,PENGELUARAN,FALSE
 55.00.01,Christmas Carol,PENGELUARAN,TRUE
 55.00.02,Penjualan barang bekas,PENGELUARAN,TRUE
 55.00.03,Bazaar makanan,PENGELUARAN,TRUE
@@ -509,4 +531,3 @@ Nomor Akun (CoA),Uraian,Kategori (Sheet),is_postable
 13,Uang yang Harus diteruskan,KAS & BANK,TRUE
 51.01,Piutang Karyawan,HUTANG / PIUTANG,TRUE
 52.01,Hutang Karyawan,HUTANG / PIUTANG,TRUE
-

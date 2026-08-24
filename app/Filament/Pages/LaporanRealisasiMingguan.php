@@ -28,6 +28,11 @@ class LaporanRealisasiMingguan extends Page implements HasForms
 
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->can('keuangan.laporan.view') ?? false;
+    }
+
     public ?string $startDate = null;
     public ?string $endDate = null;
     public ?string $mingguKe = '';

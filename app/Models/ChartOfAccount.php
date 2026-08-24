@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class ChartOfAccount extends Model
 {
+    use LogsActivity;
+
     protected $primaryKey = 'kode_akun';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -15,6 +18,16 @@ class ChartOfAccount extends Model
         'budget' => 'float',
         'is_postable' => 'boolean',
     ];
+
+    public function getActivityLogName(): string
+    {
+        return 'keuangan';
+    }
+
+    public function getActivityLogTitle(): string
+    {
+        return "{$this->kode_akun} - {$this->nama_akun}";
+    }
 
     public function parent()
     {

@@ -6,7 +6,8 @@ use App\Models\User;
 use Livewire\Livewire;
 
 beforeEach(function () {
-    $this->user = User::factory()->create();
+    $this->seed(\Database\Seeders\RbacSeeder::class);
+    $this->user = User::where('email', 'admin@gpibhosiana.org')->first();
 });
 
 test('chart of accounts tree page can be rendered', function () {

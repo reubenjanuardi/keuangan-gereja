@@ -27,6 +27,11 @@ class LaporanJurnal extends Page implements HasForms
 
     protected static ?string $title = 'Laporan Jurnal';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->can('keuangan.laporan.view') ?? false;
+    }
+
     public ?string $startDate = null;
     public ?string $endDate = null;
     public ?string $kategori = null;
