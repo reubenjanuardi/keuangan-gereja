@@ -116,6 +116,18 @@ class LaporanBukuBesar extends Page implements HasForms
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('export_excel')
+                ->label('Export Excel')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('success')
+                ->url(fn (): string => route('laporan.buku-besar.excel', [
+                    'startDate' => $this->startDate ?? '',
+                    'endDate' => $this->endDate ?? '',
+                    'kodeAkun' => $this->kodeAkun ?? '',
+                    'jenisVoucher' => $this->jenisVoucher ?? '',
+                ]))
+                ->openUrlInNewTab(),
+
             Action::make('cetak_pdf')
                 ->label('Cetak PDF')
                 ->icon('heroicon-o-printer')

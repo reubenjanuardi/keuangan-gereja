@@ -104,6 +104,17 @@ class LaporanJurnal extends Page implements HasForms
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('export_excel')
+                ->label('Export Excel')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('success')
+                ->url(fn (): string => route('laporan.jurnal.excel', [
+                    'startDate' => $this->startDate ?? '',
+                    'endDate' => $this->endDate ?? '',
+                    'kategori' => $this->kategori ?? '',
+                ]))
+                ->openUrlInNewTab(),
+
             Action::make('cetak_pdf')
                 ->label('Cetak PDF')
                 ->icon('heroicon-o-printer')

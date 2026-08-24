@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoucherPdfController;
 use App\Http\Controllers\LaporanPdfController;
+use App\Http\Controllers\LaporanExcelController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -48,8 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/vouchers/{voucher}/pdf', [VoucherPdfController::class, 'stream'])->name('vouchers.pdf');
     Route::get('/laporan/buku-besar/pdf', [LaporanPdfController::class, 'bukuBesar'])->name('laporan.buku-besar.pdf');
+    Route::get('/laporan/buku-besar/excel', [LaporanExcelController::class, 'bukuBesar'])->name('laporan.buku-besar.excel');
     Route::get('/laporan/jurnal/pdf', [LaporanPdfController::class, 'jurnal'])->name('laporan.jurnal.pdf');
+    Route::get('/laporan/jurnal/excel', [LaporanExcelController::class, 'jurnal'])->name('laporan.jurnal.excel');
     Route::get('/laporan/realisasi-mingguan/pdf', [LaporanPdfController::class, 'realisasiMingguan'])->name('laporan.realisasi-mingguan.pdf');
+    Route::get('/laporan/realisasi-mingguan/excel', [LaporanExcelController::class, 'realisasiMingguan'])->name('laporan.realisasi-mingguan.excel');
 });
 
 
