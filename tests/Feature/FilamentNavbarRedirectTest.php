@@ -5,6 +5,8 @@ use Database\Seeders\ChartOfAccountSeeder;
 use Database\Seeders\RbacSeeder;
 use Filament\Facades\Filament;
 
+uses(Tests\TestCase::class, Illuminate\Foundation\Testing\RefreshDatabase::class);
+
 beforeEach(function () {
     $this->seed(ChartOfAccountSeeder::class);
     $this->seed(RbacSeeder::class);

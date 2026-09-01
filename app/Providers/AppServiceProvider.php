@@ -16,6 +16,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(\Filament\Auth\Http\Responses\Contracts\LogoutResponse::class, function () {
+            return new class implements \Filament\Auth\Http\Responses\Contracts\LogoutResponse {
+                public function toResponse($request): \Symfony\Component\HttpFoundation\Response
+                {
+                    return redirect('/');
+                }
+            };
+        });
+
         if (! class_exists(\Dom\HTMLDocument::class)) {
             $this->app->scoped(HtmlSanitizerInterface::class, function () {
                 return new class implements HtmlSanitizerInterface {

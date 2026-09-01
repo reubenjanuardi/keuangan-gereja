@@ -207,7 +207,21 @@ function closeModal() {
 }
 
 function handleLogout() {
-    router.post(route('logout'));
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = route('logout');
+
+    const match = document.cookie.match(/(^|;\s*)(XSRF-TOKEN)=([^;]+)/);
+    const token = match ? decodeURIComponent(match[3]) : '';
+
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = token;
+    form.appendChild(csrfInput);
+
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 
