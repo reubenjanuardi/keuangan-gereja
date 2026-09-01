@@ -2,8 +2,6 @@
 
 use App\Models\User;
 
-uses(Tests\TestCase::class, Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
 
