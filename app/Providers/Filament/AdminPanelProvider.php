@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             // Filament akan meredirect ke /login jika belum terautentikasi.
             ->login(false)
             ->authGuard('web')
+            ->homeUrl('/dashboard')
             ->brandName('Keuangan Gereja')
             ->brandLogo(function () {
                 return AppSetting::getLogoUrl();
