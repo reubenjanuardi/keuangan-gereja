@@ -28,6 +28,7 @@ class SettingsPanelProvider extends PanelProvider
             ->path('settings')
             ->login(false)
             ->authGuard('web')
+            ->homeUrl('/dashboard')
             ->brandName('Pengaturan Portal & Hak Akses')
             ->brandLogo(function () {
                 return AppSetting::getLogoUrl();
